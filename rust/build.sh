@@ -18,14 +18,26 @@ export RUST_BACKTRACE=full
 
 cd "$(dirname "$0")" || exit $?
 
->&2 echo "Building rust project"
+# install bindgen-cli
+>&2 echo "Installing bindgen CLI"
+cargo install bindgen-cli || exit $?
+
+# build ios rust project
+>&2 echo "Building iOS rust project"
 cargo build \
 	--target "x86_64-apple-ios" \
 	--target "aarch64-apple-ios" \
 	--target "aarch64-apple-ios-sim" \
+	--release || exit $?
+
+# build macos rust project
+>&2 echo "Building macOS rust project"
+cargo build \
 	--target "x86_64-apple-darwin" \
 	--target "aarch64-apple-darwin" \
 	--release || exit $?
+
+# make lib dir
 mkdir -p lib || exit $?
 
 # create combined ios simulator lib

@@ -4,7 +4,7 @@ public class Librespot: NSObject {
 	
 	private var core: LibrespotCore;
 	private var eventReceiver: LibrespotPlayerEventReceiver? = nil;
-  
+	
 	@objc
 	public override init() {
     let fileManager = FileManager.default;
@@ -24,7 +24,7 @@ public class Librespot: NSObject {
 		NSLog("We're calling a swift function!!!!");
 	}
 
-	@objc
+	@objc(loginWithAccessToken:storeCredentials:completionHandler:)
 	public func login(accessToken: String, storeCredentials: Bool) async throws {
 		try await core.login_with_accesstoken(accessToken, storeCredentials);
 	}
@@ -34,7 +34,7 @@ public class Librespot: NSObject {
 		core.logout();
 	}
 
-	@objc
+	@objc(initPlayer:)
 	public func initPlayer(_ listener: LibrespotPlayerEventListener) {
 		let initted = core.player_init();
 		if(!initted) {
@@ -79,7 +79,7 @@ public class Librespot: NSObject {
 		core.player_pause();
 	}
 
-	@objc
+	@objc(seekTo:)
 	public func seekTo(_ position_ms: UInt32) {
 		core.player_seek(position_ms);
 	}
