@@ -35,7 +35,7 @@
 @objc struct LibrespotRepeatChangeEvent {
 	//let context: Bool;
 	//let track: Bool;
-	let repeat: Bool;
+	let `repeat`: Bool;
 }
 
 @objc struct LibrespotAutoPlayChangeEvent {
@@ -172,9 +172,9 @@ class LibrespotPlayerEventReceiver {
 				self.listener.onEventShuffleChanged(LibrespotShuffleChangeEvent(
 					shuffle: shuffle
 				));
-			case .RepeatChanged(_, let track):
+			case .RepeatChanged(_, let `repeat`):
 				self.listener.onEventRepeatChanged(LibrespotRepeatChangeEvent(
-					repeat: track
+					repeat: `repeat`
 				));
 			case .AutoPlayChanged(let autoPlay):
 				self.listener.onEventAutoPlayChanged(LibrespotAutoPlayChangeEvent(
