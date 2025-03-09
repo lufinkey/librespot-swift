@@ -8,7 +8,12 @@ XCFRAMEWORK_HEADERS_DIR = include
 
 all: ios macos xcframework
 
-ios: $(ARCHS_IOS)
+.PHONY: bindgen-cli
+bindgen-cli:
+	cargo install bindgen-cli
+
+.PHONY: ios
+ios: bindgen-cli $(ARCHS_IOS)
 	mkdir -p lib/ios_simulator
 	@if [ -f "lib/ios_simulator/$(LIB)" ]; then \
 		rm -rf "lib/ios_simulator/$(LIB)"; \
@@ -19,7 +24,8 @@ ios: $(ARCHS_IOS)
 $(ARCHS_IOS): %:
 	cargo build --target $@ --release
 
-macos: $(ARCHS_MACOS)
+.PHONY: macos
+macos: bindgen-cli $(ARCHS_MACOS)
 	mkdir -p lib/macos
 	@if [ -f "lib/macos/$(LIB)" ]; then \
 		rm -rf "lib/macos/$(LIB)"; \
@@ -30,6 +36,7 @@ macos: $(ARCHS_MACOS)
 $(ARCHS_MACOS): %:
 	cargo build --target $@ --release
 
+.PHONY: xcframework
 xcframework: $(XCFRAMEWORK)
 
 $(XCFRAMEWORK): $(ARCHS_IOS) $(ARCHS_MACOS)

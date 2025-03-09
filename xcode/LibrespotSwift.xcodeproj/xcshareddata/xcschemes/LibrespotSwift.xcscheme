@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Scheme
+   LastUpgradeVersion = "1620"
+   version = "1.7">
+   <BuildAction
+      parallelizeBuildables = "YES"
+      buildImplicitDependencies = "YES"
+      buildArchitectures = "Automatic">
+      <PreActions>
+         <ExecutionAction
+            ActionType = "Xcode.IDEStandardExecutionActionsCore.ExecutionActionType.ShellScriptAction">
+            <ActionContent
+               title = "Run Script"
+               scriptText = "if [ -z &quot;$ACTION&quot; ] || [ &quot;$ACTION&quot; == &quot;build&quot; ]; then&#10;&#9;ACTION=&#10;&#9;if [ -z &quot;$(which cargo)&quot; ] || [ -z &quot;$(which cmake)&quot; ]; then&#10;&#9;&#9;&gt;&amp;2 echo &quot;Sourcing from bashrc to ensure environment variables are set&quot;&#10;&#9;&#9;source ~/.bashrc&#10;&#9;fi&#10;fi&#10;cd &quot;${PROJECT_DIR}/../rust&quot; || exit $?&#10;export -n SDKROOT&#10;export -n SDK_DIR&#10;export -n SDK_NAME&#10;export -n SDK_NAMES&#10;export -n DEPLOYMENT_TARGET_SETTING_NAME&#10;export -n DEPLOYMENT_TARGET_SUGGESTED_VALUES&#10;export -n DEPLOYMENT_TARGET&#10;export -n XROS_DEPLOYMENT_TARGET&#10;make $ACTION || exit $?&#10;"
+               shellToInvoke = "/bin/bash">
+               <EnvironmentBuildable>
+                  <BuildableReference
+                     BuildableIdentifier = "primary"
+                     BlueprintIdentifier = "F7E12EFC2D7DF9D0005E295E"
+                     BuildableName = "LibrespotSwift.framework"
+                     BlueprintName = "LibrespotSwift"
+                     ReferencedContainer = "container:LibrespotSwift.xcodeproj">
+                  </BuildableReference>
+               </EnvironmentBuildable>
+            </ActionContent>
+         </ExecutionAction>
+      </PreActions>
+      <BuildActionEntries>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "F7E12EFC2D7DF9D0005E295E"
+               BuildableName = "LibrespotSwift.framework"
+               BlueprintName = "LibrespotSwift"
+               ReferencedContainer = "container:LibrespotSwift.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+      </BuildActionEntries>
+   </BuildAction>
+   <TestAction
+      buildConfiguration = "Debug"
+      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
+      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+      shouldUseLaunchSchemeArgsEnv = "YES"
+      shouldAutocreateTestPlan = "YES">
+   </TestAction>
+   <LaunchAction
+      buildConfiguration = "Debug"
+      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
+      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+      launchStyle = "0"
+      useCustomWorkingDirectory = "NO"
+      ignoresPersistentStateOnLaunch = "NO"
+      debugDocumentVersioning = "YES"
+      debugServiceExtension = "internal"
+      allowLocationSimulation = "YES">
+   </LaunchAction>
+   <ProfileAction
+      buildConfiguration = "Release"
+      shouldUseLaunchSchemeArgsEnv = "YES"
+      savedToolIdentifier = ""
+      useCustomWorkingDirectory = "NO"
+      debugDocumentVersioning = "YES">
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "F7E12EFC2D7DF9D0005E295E"
+            BuildableName = "LibrespotSwift.framework"
+            BlueprintName = "LibrespotSwift"
+            ReferencedContainer = "container:LibrespotSwift.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
+   </ProfileAction>
+   <AnalyzeAction
+      buildConfiguration = "Debug">
+   </AnalyzeAction>
+   <ArchiveAction
+      buildConfiguration = "Release"
+      revealArchiveInOrganizer = "YES">
+   </ArchiveAction>
+</Scheme>

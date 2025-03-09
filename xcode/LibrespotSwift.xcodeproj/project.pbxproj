@@ -1,0 +1,521 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		F75993782D7E461A00ACB3ED /* SwiftBridgeCore.h in Headers */ = {isa = PBXBuildFile; fileRef = F7E12F5E2D7E10AE005E295E /* SwiftBridgeCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F75993792D7E461A00ACB3ED /* respot_swift_gen.h in Headers */ = {isa = PBXBuildFile; fileRef = F7E12F5B2D7E10AE005E295E /* respot_swift_gen.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F759937B2D7E481400ACB3ED /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F759937A2D7E481400ACB3ED /* AudioUnit.framework */; };
+		F759937D2D7E481B00ACB3ED /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F759937C2D7E481B00ACB3ED /* CoreAudio.framework */; };
+		F759937F2D7E482600ACB3ED /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F759937E2D7E482600ACB3ED /* SystemConfiguration.framework */; };
+		F75993912D7E4B1C00ACB3ED /* librespot_swift_gen.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F7E1B4B62D7E11ED005E295E /* librespot_swift_gen.xcframework */; };
+		F75993922D7E4B1C00ACB3ED /* librespot_swift_gen.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F7E1B4B62D7E11ED005E295E /* librespot_swift_gen.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F7E12F372D7DFFD2005E295E /* LibrespotError+Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7E12F342D7DFFD2005E295E /* LibrespotError+Error.swift */; };
+		F7E12F382D7DFFD2005E295E /* Librespot.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7E12F332D7DFFD2005E295E /* Librespot.swift */; };
+		F7E12F392D7DFFD2005E295E /* LibrespotPlayerEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7E12F352D7DFFD2005E295E /* LibrespotPlayerEvents.swift */; };
+		F7E1B4B12D7E1167005E295E /* SwiftBridgeCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7E12F5F2D7E10AE005E295E /* SwiftBridgeCore.swift */; };
+		F7E1B4B22D7E116B005E295E /* respot_swift_gen.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7E12F5C2D7E10AE005E295E /* respot_swift_gen.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		F75993932D7E4B1C00ACB3ED /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				F75993922D7E4B1C00ACB3ED /* librespot_swift_gen.xcframework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		F759937A2D7E481400ACB3ED /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.2.sdk/System/Library/Frameworks/AudioUnit.framework; sourceTree = DEVELOPER_DIR; };
+		F759937C2D7E481B00ACB3ED /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.2.sdk/System/Library/Frameworks/CoreAudio.framework; sourceTree = DEVELOPER_DIR; };
+		F759937E2D7E482600ACB3ED /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.2.sdk/System/Library/Frameworks/SystemConfiguration.framework; sourceTree = DEVELOPER_DIR; };
+		F7E12EFD2D7DF9D0005E295E /* LibrespotSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = LibrespotSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		F7E12F332D7DFFD2005E295E /* Librespot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Librespot.swift; sourceTree = "<group>"; };
+		F7E12F342D7DFFD2005E295E /* LibrespotError+Error.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LibrespotError+Error.swift"; sourceTree = "<group>"; };
+		F7E12F352D7DFFD2005E295E /* LibrespotPlayerEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibrespotPlayerEvents.swift; sourceTree = "<group>"; };
+		F7E12F5B2D7E10AE005E295E /* respot_swift_gen.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = respot_swift_gen.h; sourceTree = "<group>"; };
+		F7E12F5C2D7E10AE005E295E /* respot_swift_gen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = respot_swift_gen.swift; sourceTree = "<group>"; };
+		F7E12F5E2D7E10AE005E295E /* SwiftBridgeCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SwiftBridgeCore.h; sourceTree = "<group>"; };
+		F7E12F5F2D7E10AE005E295E /* SwiftBridgeCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftBridgeCore.swift; sourceTree = "<group>"; };
+		F7E12F612D7E10AE005E295E /* librespot_swift_gen.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = librespot_swift_gen.h; sourceTree = "<group>"; };
+		F7E12F692D7E10AE005E295E /* lib.rs */ = {isa = PBXFileReference; lastKnownFileType = text; path = lib.rs; sourceTree = "<group>"; };
+		F7E1720A2D7E10AE005E295E /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
+		F7E1720B2D7E10AE005E295E /* build.rs */ = {isa = PBXFileReference; lastKnownFileType = text; path = build.rs; sourceTree = "<group>"; };
+		F7E1720C2D7E10AE005E295E /* Cargo.lock */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cargo.lock; sourceTree = "<group>"; };
+		F7E1720D2D7E10AE005E295E /* Cargo.toml */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cargo.toml; sourceTree = "<group>"; };
+		F7E1720E2D7E10AE005E295E /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		F7E1720F2D7E10AE005E295E /* rust-toolchain.toml */ = {isa = PBXFileReference; lastKnownFileType = text; path = "rust-toolchain.toml"; sourceTree = "<group>"; };
+		F7E1B4B62D7E11ED005E295E /* librespot_swift_gen.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = librespot_swift_gen.xcframework; path = ../rust/lib/librespot_swift_gen.xcframework; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		F7E12F042D7DF9D0005E295E /* Exceptions for "LibrespotSwift" folder in "LibrespotSwift" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			publicHeaders = (
+				LibrespotSwift.h,
+			);
+			target = F7E12EFC2D7DF9D0005E295E /* LibrespotSwift */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		F7E12EFF2D7DF9D0005E295E /* LibrespotSwift */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				F7E12F042D7DF9D0005E295E /* Exceptions for "LibrespotSwift" folder in "LibrespotSwift" target */,
+			);
+			path = LibrespotSwift;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		F7E12EFA2D7DF9D0005E295E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F759937D2D7E481B00ACB3ED /* CoreAudio.framework in Frameworks */,
+				F759937F2D7E482600ACB3ED /* SystemConfiguration.framework in Frameworks */,
+				F759937B2D7E481400ACB3ED /* AudioUnit.framework in Frameworks */,
+				F75993912D7E4B1C00ACB3ED /* librespot_swift_gen.xcframework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		F7E12EF32D7DF9D0005E295E = {
+			isa = PBXGroup;
+			children = (
+				F7E12EFF2D7DF9D0005E295E /* LibrespotSwift */,
+				F7E172102D7E10AE005E295E /* rust */,
+				F7E12F362D7DFFD2005E295E /* src */,
+				F7E1B4B52D7E11ED005E295E /* Frameworks */,
+				F7E12EFE2D7DF9D0005E295E /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		F7E12EFE2D7DF9D0005E295E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F7E12EFD2D7DF9D0005E295E /* LibrespotSwift.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F7E12F362D7DFFD2005E295E /* src */ = {
+			isa = PBXGroup;
+			children = (
+				F7E12F332D7DFFD2005E295E /* Librespot.swift */,
+				F7E12F342D7DFFD2005E295E /* LibrespotError+Error.swift */,
+				F7E12F352D7DFFD2005E295E /* LibrespotPlayerEvents.swift */,
+			);
+			name = src;
+			path = ../src;
+			sourceTree = SOURCE_ROOT;
+		};
+		F7E12F5D2D7E10AE005E295E /* respot_swift_gen */ = {
+			isa = PBXGroup;
+			children = (
+				F7E12F5B2D7E10AE005E295E /* respot_swift_gen.h */,
+				F7E12F5C2D7E10AE005E295E /* respot_swift_gen.swift */,
+			);
+			path = respot_swift_gen;
+			sourceTree = "<group>";
+		};
+		F7E12F602D7E10AE005E295E /* generated */ = {
+			isa = PBXGroup;
+			children = (
+				F7E12F5D2D7E10AE005E295E /* respot_swift_gen */,
+				F7E12F5E2D7E10AE005E295E /* SwiftBridgeCore.h */,
+				F7E12F5F2D7E10AE005E295E /* SwiftBridgeCore.swift */,
+			);
+			path = generated;
+			sourceTree = "<group>";
+		};
+		F7E12F622D7E10AE005E295E /* include */ = {
+			isa = PBXGroup;
+			children = (
+				F7E12F612D7E10AE005E295E /* librespot_swift_gen.h */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		F7E12F6A2D7E10AE005E295E /* src */ = {
+			isa = PBXGroup;
+			children = (
+				F7E12F692D7E10AE005E295E /* lib.rs */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
+		F7E172102D7E10AE005E295E /* rust */ = {
+			isa = PBXGroup;
+			children = (
+				F7E12F602D7E10AE005E295E /* generated */,
+				F7E12F622D7E10AE005E295E /* include */,
+				F7E12F6A2D7E10AE005E295E /* src */,
+				F7E1720A2D7E10AE005E295E /* .gitignore */,
+				F7E1720B2D7E10AE005E295E /* build.rs */,
+				F7E1720C2D7E10AE005E295E /* Cargo.lock */,
+				F7E1720D2D7E10AE005E295E /* Cargo.toml */,
+				F7E1720E2D7E10AE005E295E /* Makefile */,
+				F7E1720F2D7E10AE005E295E /* rust-toolchain.toml */,
+			);
+			name = rust;
+			path = ../rust;
+			sourceTree = SOURCE_ROOT;
+		};
+		F7E1B4B52D7E11ED005E295E /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				F759937E2D7E482600ACB3ED /* SystemConfiguration.framework */,
+				F759937C2D7E481B00ACB3ED /* CoreAudio.framework */,
+				F759937A2D7E481400ACB3ED /* AudioUnit.framework */,
+				F7E1B4B62D7E11ED005E295E /* librespot_swift_gen.xcframework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		F7E12EF82D7DF9D0005E295E /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F75993782D7E461A00ACB3ED /* SwiftBridgeCore.h in Headers */,
+				F75993792D7E461A00ACB3ED /* respot_swift_gen.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		F7E12EFC2D7DF9D0005E295E /* LibrespotSwift */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F7E12F052D7DF9D0005E295E /* Build configuration list for PBXNativeTarget "LibrespotSwift" */;
+			buildPhases = (
+				F7E12EF82D7DF9D0005E295E /* Headers */,
+				F7E12EF92D7DF9D0005E295E /* Sources */,
+				F75993932D7E4B1C00ACB3ED /* Embed Frameworks */,
+				F7E12EFA2D7DF9D0005E295E /* Frameworks */,
+				F7E12EFB2D7DF9D0005E295E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				F7E12EFF2D7DF9D0005E295E /* LibrespotSwift */,
+			);
+			name = LibrespotSwift;
+			packageProductDependencies = (
+			);
+			productName = LibrespotSwift;
+			productReference = F7E12EFD2D7DF9D0005E295E /* LibrespotSwift.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		F7E12EF42D7DF9D0005E295E /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastUpgradeCheck = 1620;
+				TargetAttributes = {
+					F7E12EFC2D7DF9D0005E295E = {
+						CreatedOnToolsVersion = 16.2;
+					};
+				};
+			};
+			buildConfigurationList = F7E12EF72D7DF9D0005E295E /* Build configuration list for PBXProject "LibrespotSwift" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = F7E12EF32D7DF9D0005E295E;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				F7E12EFC2D7DF9D0005E295E /* LibrespotSwift */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		F7E12EFB2D7DF9D0005E295E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		F7E12EF92D7DF9D0005E295E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F7E12F372D7DFFD2005E295E /* LibrespotError+Error.swift in Sources */,
+				F7E12F382D7DFFD2005E295E /* Librespot.swift in Sources */,
+				F7E1B4B12D7E1167005E295E /* SwiftBridgeCore.swift in Sources */,
+				F7E1B4B22D7E116B005E295E /* respot_swift_gen.swift in Sources */,
+				F7E12F392D7DFFD2005E295E /* LibrespotPlayerEvents.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		F7E12F062D7DF9D0005E295E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = (
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 15.2;
+				MARKETING_VERSION = 1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				PRODUCT_BUNDLE_IDENTIFIER = com.lufinkey.LibrespotSwift;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = auto;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				XROS_DEPLOYMENT_TARGET = 2.2;
+			};
+			name = Debug;
+		};
+		F7E12F072D7DF9D0005E295E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = (
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 15.2;
+				MARKETING_VERSION = 1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				PRODUCT_BUNDLE_IDENTIFIER = com.lufinkey.LibrespotSwift;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = auto;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				XROS_DEPLOYMENT_TARGET = 2.2;
+			};
+			name = Release;
+		};
+		F7E12F082D7DF9D0005E295E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACH_O_TYPE = staticlib;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		F7E12F092D7DF9D0005E295E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACH_O_TYPE = staticlib;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		F7E12EF72D7DF9D0005E295E /* Build configuration list for PBXProject "LibrespotSwift" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F7E12F082D7DF9D0005E295E /* Debug */,
+				F7E12F092D7DF9D0005E295E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F7E12F052D7DF9D0005E295E /* Build configuration list for PBXNativeTarget "LibrespotSwift" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F7E12F062D7DF9D0005E295E /* Debug */,
+				F7E12F072D7DF9D0005E295E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = F7E12EF42D7DF9D0005E295E /* Project object */;
+}
