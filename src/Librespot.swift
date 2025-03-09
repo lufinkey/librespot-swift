@@ -1,3 +1,4 @@
+import Foundation
 
 @objc
 public class Librespot: NSObject {
@@ -7,7 +8,7 @@ public class Librespot: NSObject {
 	
 	@objc
 	public override init() {
-    let fileManager = FileManager.default;
+	let fileManager = FileManager.default;
 		let credentialsPath = fileManager.urls(for: .libraryDirectory, in: .userDomainMask)
 			.first?.appendingPathComponent("Preferences/librespot_session").absoluteString;
 			let audioCachePath = fileManager.urls(for: .cachesDirectory, in: .userDomainMask)
@@ -22,6 +23,11 @@ public class Librespot: NSObject {
 	@objc
 	public func doAThing() -> Void {
 		NSLog("We're calling a swift function!!!!");
+	}
+	
+	@objc
+	public func login() async throws {
+		//
 	}
 
 	@objc(loginWithAccessToken:storeCredentials:completionHandler:)

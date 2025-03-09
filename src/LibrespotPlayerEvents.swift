@@ -1,93 +1,65 @@
-
-@objc struct LibrespotPlaybackStateEvent {
-	let playRequestId: UInt64;
-	let trackURI: String;
-	let position: UInt32;
-}
-
-@objc struct LibrespotPlaybackStopEvent {
-	let playRequestId: UInt64;
-	let trackURI: String;
-}
-
-@objc struct LibrespotPreloadEvent {
-	let trackURI: String;
-}
-
-@objc struct LibrespotTrackTimeEvent {
-	let playRequestId: UInt64;
-	let trackURI: String;
-}
-
-@objc struct LibrespotTrackChangeEvent {
-	let trackURI: String;
-	let duration: UInt32;
-}
-
-@objc struct LibrespotVolumeEvent {
-	let volume: UInt16;
-}
-
-@objc struct LibrespotShuffleChangeEvent {
-	let shuffle: Bool;
-}
-
-@objc struct LibrespotRepeatChangeEvent {
-	//let context: Bool;
-	//let track: Bool;
-	let `repeat`: Bool;
-}
-
-@objc struct LibrespotAutoPlayChangeEvent {
-	let autoPlay: Bool;
-}
-
-@objc struct LibrespotFilterExplicitContentChangeEvent {
-	let filter: Bool;
-}
-
-@objc struct LibrespotPlayRequestIdChangeEvent {
-	let playRequestId: UInt64;
-}
-
-@objc struct LibrespotSessionConnectionEvent {
-	let connectionId: String;
-	let username: String;
-}
-
-@objc struct LibrespotSessionClientChangeEvent {
-	let clientId: String;
-	let clientName: String;
-	let clientBrandName: String;
-	let clientModelName: String;
-}
-
-@objc struct LibrespotUnavailableEvent {
-	let playRequestId: UInt64;
-	let trackURI: String;
-}
+import Foundation
 
 @objc public protocol LibrespotPlayerEventListener {
-	func onEventPlaying(_ evt: LibrespotPlaybackStateEvent);
-	func onEventPaused(_ evt: LibrespotPlaybackStateEvent);
-	func onEventStopped(_ evt: LibrespotPlaybackStopEvent);
-	func onEventSeeked(_ evt: LibrespotPlaybackStateEvent);
-	func onEventLoading(_ evt: LibrespotPlaybackStateEvent);
-	func onEventPreloading(_ evt: LibrespotPreloadEvent);
-	func onEventTimeToPreloadNextTrack(_ evt: LibrespotTrackTimeEvent);
-	func onEventEndOfTrack(_ evt: LibrespotTrackTimeEvent);
-	func onEventVolumeChanged(_ evt: LibrespotVolumeEvent);
-	func onEventPositionCorrection(_ evt: LibrespotPlaybackStateEvent);
-	func onEventTrackChanged(_ evt: LibrespotTrackChangeEvent);
-	func onEventShuffleChanged(_ evt: LibrespotShuffleChangeEvent);
-	func onEventRepeatChanged(_ evt: LibrespotRepeatChangeEvent);
-	func onEventAutoPlayChanged(_ data: LibrespotAutoPlayChangeEvent);
-	func onEventFilterExplicitContentChanged(_ evt: LibrespotFilterExplicitContentChangeEvent);
-	func onEventPlayRequestIdChanged(_ evt: LibrespotPlayRequestIdChangeEvent);
-	func onEventSessionConnected(_ evt: LibrespotSessionConnectionEvent);
-	func onEventSessionDisconnected(_ evt: LibrespotSessionConnectionEvent);
-	func onEventSessionClientChanged(_ evt: LibrespotSessionClientChangeEvent);
-	func onEventUnavailable(_ evt: LibrespotUnavailableEvent);
+	@objc(onEventPlayingForRequestId:trackURI:position:)
+	func onEventPlaying(playRequestId: UInt64, trackURI: String, position: UInt32)
+
+	@objc(onEventPausedForRequestId:trackURI:position:)
+	func onEventPaused(playRequestId: UInt64, trackURI: String, position: UInt32)
+
+	@objc(onEventStoppedForRequestId:trackURI:)
+	func onEventStopped(playRequestId: UInt64, trackURI: String)
+
+	@objc(onEventSeekedForRequestId:trackURI:position:)
+	func onEventSeeked(playRequestId: UInt64, trackURI: String, position: UInt32)
+
+	@objc(onEventLoadingForRequestId:trackURI:position:)
+	func onEventLoading(playRequestId: UInt64, trackURI: String, position: UInt32)
+
+	@objc(onEventPreloadingForTrackURI:)
+	func onEventPreloading(trackURI: String)
+	
+	@objc(onEventTimeToPreloadNextTrackForRequestId:trackURI:)
+	func onEventTimeToPreloadNextTrack(playRequestId: UInt64, trackURI: String)
+
+	@objc(onEventEndOfTrackForRequestId:trackURI:)
+	func onEventEndOfTrack(playRequestId: UInt64, trackURI: String)
+
+	@objc(onEventVolumeChangedTo:)
+	func onEventVolumeChanged(volume: UInt16)
+
+	@objc(onEventPositionCorrectionForRequestId:trackURI:position:)
+	func onEventPositionCorrection(playRequestId: UInt64, trackURI: String, position: UInt32)
+
+	@objc(onEventTrackChangedForTrackURI:duration:)
+	func onEventTrackChanged(trackURI: String, duration: UInt32)
+
+	@objc(onEventShuffleChangedTo:)
+	func onEventShuffleChanged(shuffle: Bool)
+
+	@objc(onEventRepeatChangedTo:)
+	func onEventRepeatChanged(repeat: Bool)
+
+	@objc(onEventAutoPlayChangedTo:)
+	func onEventAutoPlayChanged(autoPlay: Bool)
+
+	@objc(onEventFilterExplicitContentChangedTo:)
+	func onEventFilterExplicitContentChanged(filter: Bool)
+
+	@objc(onEventPlayRequestIdChangedTo:)
+	func onEventPlayRequestIdChanged(playRequestId: UInt64)
+
+	@objc(onEventSessionConnectedForConnectionId:username:)
+	func onEventSessionConnected(connectionId: String, username: String)
+
+	@objc(onEventSessionDisconnectedForConnectionId:username:)
+	func onEventSessionDisconnected(connectionId: String, username: String)
+
+	@objc(onEventSessionClientChangedToClientId:clientName:clientBrandName:clientModelName:)
+	func onEventSessionClientChanged(clientId: String, clientName: String, clientBrandName: String, clientModelName: String)
+
+	@objc(onEventUnavailableForRequestId:trackURI:)
+	func onEventUnavailable(playRequestId: UInt64, trackURI: String)
 }
 
 class LibrespotPlayerEventReceiver {
@@ -111,105 +83,85 @@ class LibrespotPlayerEventReceiver {
 			}
 			switch evt {
 			case .Playing(let playRequestId, let trackURI, let position):
-				self.listener.onEventPlaying(LibrespotPlaybackStateEvent(
+				self.listener.onEventPlaying(
 					playRequestId: playRequestId,
 					trackURI: trackURI.toString(),
-					position: position
-				));
-			case .Paused(let playRequestId, let trackURI, let positionMs):
-				self.listener.onEventPaused(LibrespotPlaybackStateEvent(
+					position: position);
+			case .Paused(let playRequestId, let trackURI, let position):
+				self.listener.onEventPaused(
 					playRequestId: playRequestId,
 					trackURI: trackURI.toString(),
-					position: positionMs
-				));
+					position: position);
 			case .Stopped(let playRequestId, let trackURI):
-				self.listener.onEventStopped(LibrespotPlaybackStopEvent(
+				self.listener.onEventStopped(
 					playRequestId: playRequestId,
-					trackURI: trackURI.toString()
-				));
+					trackURI: trackURI.toString());
 			case .Seeked(let playRequestId, let trackURI, let positionMs):
-				self.listener.onEventSeeked(LibrespotPlaybackStateEvent(
+				self.listener.onEventSeeked(
 					playRequestId: playRequestId,
 					trackURI: trackURI.toString(),
-					position: positionMs
-				));
+					position: positionMs);
 			case .Loading(let playRequestId, let trackURI, let positionMs):
-				self.listener.onEventLoading(LibrespotPlaybackStateEvent(
+				self.listener.onEventLoading(
 					playRequestId: playRequestId,
 					trackURI: trackURI.toString(),
-					position: positionMs
-				));
+					position: positionMs);
 			case .Preloading(let trackURI):
-				self.listener.onEventPreloading(LibrespotPreloadEvent(
-					trackURI: trackURI.toString()
-				));
+				self.listener.onEventPreloading(
+					trackURI: trackURI.toString());
 			case .TimeToPreloadNextTrack(let playRequestId, let trackURI):
-				self.listener.onEventTimeToPreloadNextTrack(LibrespotTrackTimeEvent(
+				self.listener.onEventTimeToPreloadNextTrack(
 					playRequestId: playRequestId,
-					trackURI: trackURI.toString()
-				));
+					trackURI: trackURI.toString());
 			case .EndOfTrack(let playRequestId, let trackURI):
-				self.listener.onEventEndOfTrack(LibrespotTrackTimeEvent(
+				self.listener.onEventEndOfTrack(
 					playRequestId: playRequestId,
-					trackURI: trackURI.toString()
-				));
+					trackURI: trackURI.toString());
 			case .VolumeChanged(let volume):
-				self.listener.onEventVolumeChanged(LibrespotVolumeEvent(
-					volume: volume
-				));
-			case .PositionCorrection(let playRequestId, let trackURI, let positionMs):
-				self.listener.onEventPositionCorrection(LibrespotPlaybackStateEvent(
+				self.listener.onEventVolumeChanged(
+					volume: volume);
+			case .PositionCorrection(let playRequestId, let trackURI, let position):
+				self.listener.onEventPositionCorrection(
 					playRequestId: playRequestId,
 					trackURI: trackURI.toString(),
-					position: positionMs
-				));
-			case .TrackChanged(let trackURI, let durationMs):
-				self.listener.onEventTrackChanged(LibrespotTrackChangeEvent(
+					position: position);
+			case .TrackChanged(let trackURI, let duration):
+				self.listener.onEventTrackChanged(
 					trackURI: trackURI.toString(),
-					duration: durationMs
-				));
+					duration: duration);
 			case .ShuffleChanged(let shuffle):
-				self.listener.onEventShuffleChanged(LibrespotShuffleChangeEvent(
-					shuffle: shuffle
-				));
-			case .RepeatChanged(_, let `repeat`):
-				self.listener.onEventRepeatChanged(LibrespotRepeatChangeEvent(
-					repeat: `repeat`
-				));
+				self.listener.onEventShuffleChanged(
+					shuffle: shuffle);
+			case .RepeatChanged(let `repeat`):
+				self.listener.onEventRepeatChanged(
+					repeat: `repeat`);
 			case .AutoPlayChanged(let autoPlay):
-				self.listener.onEventAutoPlayChanged(LibrespotAutoPlayChangeEvent(
-					autoPlay: autoPlay
-				));
+				self.listener.onEventAutoPlayChanged(
+					autoPlay: autoPlay);
 			case .FilterExplicitContentChanged(let filter):
-				self.listener.onEventFilterExplicitContentChanged(LibrespotFilterExplicitContentChangeEvent(
-					filter: filter
-				));
+				self.listener.onEventFilterExplicitContentChanged(
+					filter: filter);
 			case .PlayRequestIdChanged(let playRequestId):
-				self.listener.onEventPlayRequestIdChanged(LibrespotPlayRequestIdChangeEvent(
-					playRequestId: playRequestId
-				));
+				self.listener.onEventPlayRequestIdChanged(
+					playRequestId: playRequestId);
 			case .SessionConnected(let connectionId, let userName):
-				self.listener.onEventSessionConnected(LibrespotSessionConnectionEvent(
+				self.listener.onEventSessionConnected(
 					connectionId: connectionId.toString(),
-					username: userName.toString()
-				));
+					username: userName.toString());
 			case .SessionDisconnected(let connectionId, let userName):
-				self.listener.onEventSessionDisconnected(LibrespotSessionConnectionEvent(
+				self.listener.onEventSessionDisconnected(
 					connectionId: connectionId.toString(),
-					username: userName.toString()
-				));
+					username: userName.toString());
 			case .SessionClientChanged(let clientId, let clientName, let clientBrandName, let clientModelName):
-				self.listener.onEventSessionClientChanged(LibrespotSessionClientChangeEvent(
+				self.listener.onEventSessionClientChanged(
 					clientId: clientId.toString(),
 					clientName: clientName.toString(),
 					clientBrandName: clientBrandName.toString(),
-					clientModelName: clientModelName.toString()
-				));
+					clientModelName: clientModelName.toString());
 			case .Unavailable(let playRequestId, let trackURI):
-				self.listener.onEventUnavailable(LibrespotUnavailableEvent(
+				self.listener.onEventUnavailable(
 					playRequestId: playRequestId,
-					trackURI: trackURI.toString()
-				));
+					trackURI: trackURI.toString());
 			}
 		}
 	}

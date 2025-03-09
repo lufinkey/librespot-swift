@@ -14,7 +14,7 @@ fi
 LIB_FILE="librespot_swift_gen.a"
 XCFRAMEWORK_FILE="librespot_swift_gen.xcframework"
 XCFRAMEWORK_HEADERS_DIR="include"
-export RUST_BACKTRACE=full
+#export RUST_BACKTRACE=full
 
 cd "$(dirname "$0")" || exit $?
 
