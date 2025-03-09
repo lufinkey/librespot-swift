@@ -17,5 +17,8 @@ Pod::Spec.new do |s|
 	s.vendored_frameworks = "rust/lib/librespot_swift_gen.xcframework"
 	#s.pod_target_xcconfig = { "DEFINES_MODULE" => "YES" }
 
-	s.prepare_command = "./rust/build.sh || exit $?"
+	s.prepare_command = <<-CMD
+		cd rust
+		make
+	CMD
 end
