@@ -2,13 +2,22 @@ import Foundation
 
 @objc
 public class Librespot: NSObject {
+	private static let oauthPort = 5165;
+	private static let loginCallbackURL: URL = URL(
+		string: "http://127.0.0.1:\(oauthPort)/login")!;
 	
 	private var core: LibrespotCore;
 	private var eventReceiver: LibrespotPlayerEventReceiver? = nil;
+	private var authorizationState = LibrespotUtils.randomURLSafe(length: 128);
+	private var codeVerifier: String;
+	private var codeChallenge: String;
 	
 	@objc
 	public override init() {
-	let fileManager = FileManager.default;
+		self.codeVerifier = LibrespotUtils.randomURLSafe(length: 128)
+		self.codeChallenge = LibrespotUtils.makeCodeChallenge(codeVerifier: codeVerifier)
+		
+		let fileManager = FileManager.default;
 		let credentialsPath = fileManager.urls(for: .libraryDirectory, in: .userDomainMask)
 			.first?.appendingPathComponent("Preferences/librespot_session").absoluteString;
 			let audioCachePath = fileManager.urls(for: .cachesDirectory, in: .userDomainMask)
@@ -19,15 +28,83 @@ public class Librespot: NSObject {
 			audioCachePath);
 		super.init()
 	}
-
-	@objc
-	public func doAThing() -> Void {
-		NSLog("We're calling a swift function!!!!");
+	
+	@objc(authenticateWithClientId:scopes:redirectURL:tokenSwapURL:showDialog:completionHandler:)
+	public func authenticate(
+		clientId: String?,
+		scopes: [String],
+		redirectURL: URL?,
+		tokenSwapURL: URL?,
+		showDialog: Bool) async throws {
+		//
 	}
 	
-	@objc
-	public func login() async throws {
-		//
+	@MainActor
+	public func authenticate(_ options: LibrespotLoginOptions) async throws -> LibrespotSession? {
+		#if os(iOS)
+		let authViewController = LibrespotIOSAuthViewController(options)
+		
+		weak var weakAuthController = authViewController;
+		let dismiss: ((_ onComplete: @escaping () -> Void) -> Void) = { (onComplete) in
+			if let authController = weakAuthController, let presentingVC = authController.presentingViewController {
+				presentingVC.dismiss(animated:true) {
+					onComplete();
+				};
+			} else {
+				onComplete()
+			}
+		}
+		
+		var done = false;
+		return try await withCheckedThrowingContinuation { continuation in
+			authViewController.onAuthenticated = { (session) in
+				if !done {
+					done = true;
+					dismiss {
+						continuation.resume(returning: session);
+					}
+				}
+			};
+			authViewController.onError = { (error) in
+				if !done {
+					done = true;
+					dismiss {
+						continuation.resume(throwing: error);
+					}
+				}
+			};
+			authViewController.onCancel = {
+				if !done {
+					done = true;
+					dismiss {
+						continuation.resume(returning: nil)
+					}
+				}
+			};
+			authViewController.onDenied = {
+				if !done {
+					done = true;
+					dismiss {
+						continuation.resume(returning: nil)
+					}
+				}
+			};
+			authViewController.onDismissed = {
+				if !done {
+					done = true;
+					continuation.resume(returning: nil)
+				}
+			};
+			
+			guard let topController = LibrespotIOSAuthViewController.findTopViewController() else {
+				continuation.resume(throwing: LibrespotError(kind:"UIError", message: "No top controller to display login view"))
+				return;
+			}
+			topController.present(authViewController, animated: true, completion: nil);
+		}
+		#else
+		throw LibrespotError(kind: "NotImplemented", message: "Sorry");
+		#endif
 	}
 
 	@objc(loginWithAccessToken:storeCredentials:completionHandler:)

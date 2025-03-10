@@ -141,6 +141,8 @@ mod ffi {
 	extern "Rust" {
 		type LibrespotCore;
 
+		pub fn librespot_default_client_id() -> String;
+
 		#[swift_bridge(init)]
 		fn new(
 			credentials_path: Option<String>,
@@ -189,6 +191,10 @@ fn create_empty_session() -> Session {
 	return session;
 }
 
+pub fn librespot_default_client_id() -> String {
+	return SessionConfig::default().client_id;
+}
+
 pub struct LibrespotCore {
 	options: LibrespotOptions,
 	session: Session,
@@ -198,6 +204,7 @@ pub struct LibrespotCore {
 }
 
 impl LibrespotCore {
+
 	fn new(
 		credentials_path: Option<String>,
 		audio_cache_path: Option<String>,
