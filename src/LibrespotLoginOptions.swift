@@ -25,21 +25,37 @@ public struct LibrespotLoginOptions {
 	var tokenSwapURL: URL?
 	var tokenRefreshURL: URL?
 	var loginUserAgent: String?
-	var params: [String: Any]?
+	var params: [String: String]?
 	
 	var showDialog: Bool? {
-		get { self.params?["show_dialog"] as? Bool }
+		get {
+			if let valueStr = self.params?[ParamKey.ShowDialog.rawValue] as? String {
+				return valueStr == "true";
+			}
+			return nil;
+		}
 		set {
 			if let newValue = newValue {
+				let newValueStr = newValue ? "true" : "false"
 				if self.params == nil {
-					self.params = [ParamKey.ShowDialog.rawValue: newValue];
+					self.params = [ParamKey.ShowDialog.rawValue: newValueStr];
 				} else {
-					self.params![ParamKey.ShowDialog.rawValue] = newValue
+					self.params![ParamKey.ShowDialog.rawValue] = newValueStr
 				}
 			} else {
 				self.params?.removeValue(forKey: ParamKey.ShowDialog.rawValue)
 			}
 		}
+	}
+	
+	static var `default`: LibrespotLoginOptions {
+		return LibrespotLoginOptions(
+			clientID: librespot_default_client_id().toString(),
+			redirectURL: URL(string:"librespot://spotify-auth")!,
+			scopes: ["streaming"],
+			tokenSwapURL: URL(string: "https://accounts.spotify.com/api/token")!,
+			tokenRefreshURL: URL(string: "https://accounts.spotify.com/api/token")!,
+			params: [ParamKey.ShowDialog.rawValue:"true"])
 	}
 	
 	func spotifyWebAuthenticationURL(
@@ -72,7 +88,7 @@ public struct LibrespotLoginOptions {
 			for (key, value) in params {
 				// Remove duplicate query items if they exist
 				queryItems.removeAll { $0.name == key }
-				queryItems.append(URLQueryItem(name: key, value: value as? String))
+				queryItems.append(URLQueryItem(name: key, value: value))
 			}
 		}
 		
@@ -104,7 +120,7 @@ public struct LibrespotLoginOptions {
 			throw LibrespotError.missingOption("scopes")
 		}
 		
-		var params: [String: Any] = [:]
+		var params: [String: String] = [:]
 		if let showDialog = showDialog {
 			params["show_dialog"] = showDialog ? "true" : "false"
 		}

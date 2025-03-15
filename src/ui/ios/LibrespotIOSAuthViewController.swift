@@ -179,7 +179,7 @@ public class LibrespotIOSAuthViewController: UINavigationController, WKNavigatio
 			.shared
 			.connectedScenes
 			.compactMap({ ($0 as? UIWindowScene)?.keyWindow })
-			.last?.rootViewController else {
+			.first(where: { $0.rootViewController != nil })?.rootViewController else {
 				return nil
 			}
 		while let aboveController = topController.presentedViewController {

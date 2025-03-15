@@ -25,15 +25,16 @@ public class Librespot: NSObject {
 	}
 	
 	@objc(authenticateWithClientId:scopes:redirectURL:tokenSwapURL:tokenRefreshURL:loginUserAgent:params:completionHandler:)
-	public func authenticate(
+	@MainActor
+	public static func authenticate(
 		clientId: String,
 		scopes: [String],
 		redirectURL: URL,
 		tokenSwapURL: URL? = nil,
 		tokenRefreshURL: URL? = nil,
 		loginUserAgent: String? = nil,
-		params: [String:Any]? = nil) async throws -> LibrespotSession? {
-		return try await self.authenticate(LibrespotLoginOptions(
+		params: [String:String]? = nil) async throws -> LibrespotSession? {
+		return try await Self.authenticate(LibrespotLoginOptions(
 			clientID: clientId,
 			redirectURL: redirectURL,
 			scopes: scopes,
@@ -44,7 +45,7 @@ public class Librespot: NSObject {
 	}
 	
 	@MainActor
-	public func authenticate(_ options: LibrespotLoginOptions) async throws -> LibrespotSession? {
+	public static func authenticate(_ options: LibrespotLoginOptions) async throws -> LibrespotSession? {
 		#if os(iOS)
 		var done = false;
 		return try await withCheckedThrowingContinuation { continuation in
@@ -110,6 +111,12 @@ public class Librespot: NSObject {
 		// TODO implement macOS flow
 		throw LibrespotError(kind: "NotImplemented", message: "Sorry");
 		#endif
+	}
+	
+	@objc
+	@MainActor
+	public static func authenticate() async throws -> LibrespotSession? {
+		return try await Self.authenticate(.default);
 	}
 
 	@objc(loginWithAccessToken:storeCredentials:completionHandler:)
