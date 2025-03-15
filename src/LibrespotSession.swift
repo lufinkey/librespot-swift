@@ -7,12 +7,14 @@
 
 @objc
 public class LibrespotSession: NSObject {
+	public var clientID: String;
 	public var accessToken: String;
 	public var expireDate: Date;
 	public var refreshToken: String?;
 	public var scopes: [String];
 	
-	@objc public init(accessToken: String, expireDate: Date, refreshToken: String?, scopes: [String]) {
+	@objc public init(clientID: String, accessToken: String, expireDate: Date, refreshToken: String?, scopes: [String]) {
+		self.clientID = clientID;
 		self.accessToken = accessToken;
 		self.expireDate = expireDate;
 		self.refreshToken = refreshToken;
@@ -25,6 +27,7 @@ public class LibrespotSession: NSObject {
 	
 	func saveToUserDefaults(_ userDefaults: UserDefaults, key: String) {
 		var data: [String: Any] = [:]
+		data["clientID"] = self.clientID;
 		data["accessToken"] = self.accessToken;
 		data["expireDate"] = self.expireDate.ISO8601Format();
 		data["refreshToken"] = self.refreshToken;
@@ -40,9 +43,14 @@ public class LibrespotSession: NSObject {
 	}
 	
 	static func fromDictionary(_ data: [String: Any]) throws -> LibrespotSession {
+		// Client ID
+		guard let clientID = data["clientID"] as? String else {
+			throw LibrespotError.missingSessionParam("clientID");
+		}
+		
 		// Access token
 		guard let accessToken = data["accessToken"] as? String else {
-			throw LibrespotError.missingSessionParam("accessToken")
+			throw LibrespotError.missingSessionParam("accessToken");
 		}
 		
 		// Expiry date
@@ -63,6 +71,7 @@ public class LibrespotSession: NSObject {
 		}
 		
 		return LibrespotSession(
+			clientID: clientID,
 			accessToken: accessToken,
 			expireDate: expireDate,
 			refreshToken: refreshToken,

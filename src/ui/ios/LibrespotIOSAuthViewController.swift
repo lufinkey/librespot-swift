@@ -13,7 +13,8 @@ public class LibrespotIOSAuthViewController: UINavigationController, WKNavigatio
 	private let loginOptions: LibrespotLoginOptions
 	private let progressView: LibrespotIOSProgressView = LibrespotIOSProgressView()
 	private let webViewController = LibrespotIOSWebViewController()
-	private let xssState: String = UUID().uuidString
+	private let xssState: String = LibrespotUtils.randomURLSafe(length: 128)
+	private let codeVerifier: String = LibrespotUtils.randomURLSafe(length: 128)
 	
 	public var onCancel: (() -> Void)? = nil;
 	public var onDismissed: (() -> Void)? = nil;
@@ -24,34 +25,42 @@ public class LibrespotIOSAuthViewController: UINavigationController, WKNavigatio
 	init(_ options: LibrespotLoginOptions) {
 		self.loginOptions = options;
 		super.init(rootViewController: webViewController);
+	}
+	
+	required init?(coder: NSCoder) {
+		fatalError("init(coder:) has not been implemented")
+	}
+	
+	override public func viewDidLoad() {
+		super.viewDidLoad();
 		
 		self.navigationBar.barTintColor = .black;
 		self.navigationBar.tintColor = .white;
 		self.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white];
 		self.view.backgroundColor = .white;
 		self.modalPresentationStyle = .formSheet;
+		self.presentationController?.delegate = self;
 		
-		if let loginUserAgent = options.loginUserAgent {
-			self.webViewController.webView.customUserAgent = loginUserAgent;
-		}
 		self.webViewController.webView.navigationDelegate = self;
-		//_webController.title = @"Log into Spotify";
+		//self.webController.title = @"Log into Spotify";
 		self.webViewController.navigationItem.leftBarButtonItem = UIBarButtonItem(
 			barButtonSystemItem: .cancel,
 			target: self,
 			action:#selector(didSelectCancelButton));
 		
-		if let url = options.spotifyWebAuthenticationURL(
-			responseType: options.tokenSwapURL != nil ? .Code : .Token,
-			state: xssState) {
+		if let loginUserAgent = self.loginOptions.loginUserAgent {
+			self.webViewController.webView.customUserAgent = loginUserAgent;
+		}
+		
+		if let url = self.loginOptions.spotifyWebAuthenticationURL(
+			responseType: self.loginOptions.tokenSwapURL != nil ? .Code : .Token,
+			state: self.xssState,
+			codeChallengeMethod: .S256,
+			codeChallenge: LibrespotUtils.makeCodeChallenge(codeVerifier: self.codeVerifier)) {
 			self.webViewController.webView.load(URLRequest(url: url));
 		} else {
 			print("Failed to create auth url")
 		}
-	}
-	
-	required init?(coder: NSCoder) {
-		fatalError("init(coder:) has not been implemented")
 	}
 	
 	override public var preferredStatusBarStyle: UIStatusBarStyle { .lightContent };
@@ -145,6 +154,7 @@ public class LibrespotIOSAuthViewController: UINavigationController, WKNavigatio
 				return;
 			}
 			let session = LibrespotSession(
+				clientID: self.loginOptions.clientID,
 				accessToken: accessToken,
 				expireDate: LibrespotSession.expireDateFromSeconds(expireSeconds),
 				refreshToken: params["refresh_token"],
@@ -160,7 +170,12 @@ public class LibrespotIOSAuthViewController: UINavigationController, WKNavigatio
 			// swap code for token
 			let session: LibrespotSession;
 			do {
-				session = try await LibrespotAuth.retrieveAccessTokenFrom(code: code, url: tokenSwapURL);
+				session = try await LibrespotAuth.retrieveAccessTokenFrom(
+					code: code,
+					codeVerifier: self.codeVerifier,
+					clientID: self.loginOptions.clientID,
+					redirectURI: self.loginOptions.redirectURL.absoluteString,
+					url: tokenSwapURL);
 			} catch let error {
 				self.onError?(error);
 				return;

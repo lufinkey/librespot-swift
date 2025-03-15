@@ -5,10 +5,12 @@
 //  Created by Jari on 11/11/2024.
 //
 
-extension LibrespotError: Error {
+extension LibrespotError: LocalizedError {
 	init(kind: String, message: String) {
 		self.init(kind: RustString(kind), message: RustString(message));
 	}
+	
+	public var errorDescription: String? { self.message.toString() }
 	
 	static func badResponse(message: String? = nil) -> LibrespotError {
 		return LibrespotError(kind: "BadResponse", message: message ?? "Bad response");

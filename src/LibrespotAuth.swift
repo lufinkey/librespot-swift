@@ -132,10 +132,13 @@ public class LibrespotAuth: NSObject {
 			}
 		}
 		
-		let scopes = session.scopes;
 		let refreshTask = Task<Bool,Error> {
-			let session = try await Self.refreshSession(withToken:refreshToken, scopes:scopes, url:tokenRefreshURL);
-			self.session = session;
+			let newSession = try await Self.refreshSession(
+				withToken: refreshToken,
+				clientID: session.clientID,
+				scopes: session.scopes,
+				url: tokenRefreshURL);
+			self.session = newSession;
 			self.save();
 			return true
 		}
@@ -188,23 +191,37 @@ public class LibrespotAuth: NSObject {
 		return nil;
 	}
 	
-	private static func refreshSession(withToken refreshToken: String, scopes: [String], url: URL) async throws -> LibrespotSession {
-		let result = try await self.performTokenURLRequest(to: url, params: [
+	private static func refreshSession(withToken refreshToken: String, clientID: String, scopes: [String], url: URL) async throws -> LibrespotSession {
+		var params = [
+			"grant_type": "refresh_token",
+			"client_id": clientID,
 			"refresh_token": refreshToken
-		]);
+		];
+		let result = try await self.performTokenURLRequest(to: url, params: params);
 		guard let accessToken = result?["access_token"] as? String,
 			  let expireSeconds = result?["expires_in"] as? Int else {
 			throw LibrespotError.badResponse(message: "Missing expected response parameters")
 		}
 		return LibrespotSession(
+			clientID: clientID,
 			accessToken: accessToken,
 			expireDate: LibrespotSession.expireDateFromSeconds(expireSeconds),
 			refreshToken: refreshToken,
 			scopes: scopes);
 	}
 	
-	static func retrieveAccessTokenFrom(code: String, url: URL) async throws -> LibrespotSession {
-		let params = ["code": code]
+	static func retrieveAccessTokenFrom(code: String, codeVerifier: String?, clientID: String, redirectURI: String?, url: URL) async throws -> LibrespotSession {
+		var params = [
+			"grant_type": "authorization_code",
+			"code": code,
+			"client_id": clientID,
+		]
+		if let codeVerifier = codeVerifier {
+			params["code_verifier"] = codeVerifier;
+		}
+		if let redirectURI = redirectURI {
+			params["redirect_uri"] = redirectURI
+		}
 		
 		let result = try await self.performTokenURLRequest(to: url, params: params)
 		guard let accessToken = result?["access_token"] as? String,
@@ -214,6 +231,7 @@ public class LibrespotAuth: NSObject {
 		
 		let scope = result?["scope"] as? String
 		let session = LibrespotSession(
+			clientID: clientID,
 			accessToken: accessToken,
 			expireDate: LibrespotSession.expireDateFromSeconds(expireSeconds),
 			refreshToken: result?["refresh_token"] as? String,
