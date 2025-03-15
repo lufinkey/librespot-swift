@@ -7,13 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		F75993782D7E461A00ACB3ED /* SwiftBridgeCore.h in Headers */ = {isa = PBXBuildFile; fileRef = F7E12F5E2D7E10AE005E295E /* SwiftBridgeCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F75993792D7E461A00ACB3ED /* respot_swift_gen.h in Headers */ = {isa = PBXBuildFile; fileRef = F7E12F5B2D7E10AE005E295E /* respot_swift_gen.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F736C4BC2D86208300248303 /* SwiftBridgeCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F736C4A92D86206800248303 /* SwiftBridgeCore.swift */; };
+		F736C4BD2D86208800248303 /* SwiftBridgeCore.h in Headers */ = {isa = PBXBuildFile; fileRef = F736C4A82D86206800248303 /* SwiftBridgeCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F736C4BE2D86209100248303 /* respot_swift_gen.swift in Sources */ = {isa = PBXBuildFile; fileRef = F736C4A62D86206800248303 /* respot_swift_gen.swift */; };
+		F736C4BF2D86209600248303 /* respot_swift_gen.h in Headers */ = {isa = PBXBuildFile; fileRef = F736C4A52D86206800248303 /* respot_swift_gen.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F736C4C02D8620B500248303 /* librespot_swift_gen.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F736C4BB2D86206800248303 /* librespot_swift_gen.a */; };
 		F759937B2D7E481400ACB3ED /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F759937A2D7E481400ACB3ED /* AudioUnit.framework */; };
 		F759937D2D7E481B00ACB3ED /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F759937C2D7E481B00ACB3ED /* CoreAudio.framework */; };
 		F759937F2D7E482600ACB3ED /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F759937E2D7E482600ACB3ED /* SystemConfiguration.framework */; };
-		F75993912D7E4B1C00ACB3ED /* librespot_swift_gen.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F7E1B4B62D7E11ED005E295E /* librespot_swift_gen.xcframework */; };
-		F75993922D7E4B1C00ACB3ED /* librespot_swift_gen.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F7E1B4B62D7E11ED005E295E /* librespot_swift_gen.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F759B7FB2D7E80D700ACB3ED /* LibrespotIOSProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F759B7EF2D7E80D700ACB3ED /* LibrespotIOSProgressView.swift */; };
 		F759B7FC2D7E80D700ACB3ED /* LibrespotIOSAuthViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F759B7EE2D7E80D700ACB3ED /* LibrespotIOSAuthViewController.swift */; };
 		F759B7FD2D7E80D700ACB3ED /* LibrespotIOSWebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F759B7F02D7E80D700ACB3ED /* LibrespotIOSWebViewController.swift */; };
@@ -24,9 +25,24 @@
 		F759B8022D7E80D700ACB3ED /* LibrespotUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F759B7F92D7E80D700ACB3ED /* LibrespotUtils.swift */; };
 		F759B8032D7E80D700ACB3ED /* LibrespotAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = F759B7F42D7E80D700ACB3ED /* LibrespotAuth.swift */; };
 		F759B8042D7E80D700ACB3ED /* Librespot.swift in Sources */ = {isa = PBXBuildFile; fileRef = F759B7F32D7E80D700ACB3ED /* Librespot.swift */; };
-		F7E1B4B12D7E1167005E295E /* SwiftBridgeCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7E12F5F2D7E10AE005E295E /* SwiftBridgeCore.swift */; };
-		F7E1B4B22D7E116B005E295E /* respot_swift_gen.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7E12F5C2D7E10AE005E295E /* respot_swift_gen.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		F736C4BA2D86206800248303 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F736C4B42D86206800248303 /* respot_swift_gen.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CA00D104C0926D63D56A5ED7;
+			remoteInfo = "respot_swift_gen.a (static library)";
+		};
+		F736C4C12D8620BA00248303 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F736C4B42D86206800248303 /* respot_swift_gen.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = CA00D104C092607AA7E0C987;
+			remoteInfo = "respot_swift_gen.a (static library)";
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		F75993932D7E4B1C00ACB3ED /* Embed Frameworks */ = {
@@ -35,7 +51,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				F75993922D7E4B1C00ACB3ED /* librespot_swift_gen.xcframework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -43,6 +58,19 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		F736C4A52D86206800248303 /* respot_swift_gen.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = respot_swift_gen.h; sourceTree = "<group>"; };
+		F736C4A62D86206800248303 /* respot_swift_gen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = respot_swift_gen.swift; sourceTree = "<group>"; };
+		F736C4A82D86206800248303 /* SwiftBridgeCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SwiftBridgeCore.h; sourceTree = "<group>"; };
+		F736C4A92D86206800248303 /* SwiftBridgeCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftBridgeCore.swift; sourceTree = "<group>"; };
+		F736C4AB2D86206800248303 /* librespot_swift_gen.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = librespot_swift_gen.h; sourceTree = "<group>"; };
+		F736C4AD2D86206800248303 /* lib.rs */ = {isa = PBXFileReference; lastKnownFileType = text; path = lib.rs; sourceTree = "<group>"; };
+		F736C4AF2D86206800248303 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
+		F736C4B02D86206800248303 /* build.rs */ = {isa = PBXFileReference; lastKnownFileType = text; path = build.rs; sourceTree = "<group>"; };
+		F736C4B12D86206800248303 /* Cargo.lock */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cargo.lock; sourceTree = "<group>"; };
+		F736C4B22D86206800248303 /* Cargo.toml */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cargo.toml; sourceTree = "<group>"; };
+		F736C4B32D86206800248303 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		F736C4B42D86206800248303 /* respot_swift_gen.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = respot_swift_gen.xcodeproj; sourceTree = "<group>"; };
+		F736C4B52D86206800248303 /* rust-toolchain.toml */ = {isa = PBXFileReference; lastKnownFileType = text; path = "rust-toolchain.toml"; sourceTree = "<group>"; };
 		F759937A2D7E481400ACB3ED /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.2.sdk/System/Library/Frameworks/AudioUnit.framework; sourceTree = DEVELOPER_DIR; };
 		F759937C2D7E481B00ACB3ED /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.2.sdk/System/Library/Frameworks/CoreAudio.framework; sourceTree = DEVELOPER_DIR; };
 		F759937E2D7E482600ACB3ED /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.2.sdk/System/Library/Frameworks/SystemConfiguration.framework; sourceTree = DEVELOPER_DIR; };
@@ -57,19 +85,6 @@
 		F759B7F82D7E80D700ACB3ED /* LibrespotSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibrespotSession.swift; sourceTree = "<group>"; };
 		F759B7F92D7E80D700ACB3ED /* LibrespotUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibrespotUtils.swift; sourceTree = "<group>"; };
 		F7E12EFD2D7DF9D0005E295E /* LibrespotSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = LibrespotSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		F7E12F5B2D7E10AE005E295E /* respot_swift_gen.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = respot_swift_gen.h; sourceTree = "<group>"; };
-		F7E12F5C2D7E10AE005E295E /* respot_swift_gen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = respot_swift_gen.swift; sourceTree = "<group>"; };
-		F7E12F5E2D7E10AE005E295E /* SwiftBridgeCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SwiftBridgeCore.h; sourceTree = "<group>"; };
-		F7E12F5F2D7E10AE005E295E /* SwiftBridgeCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftBridgeCore.swift; sourceTree = "<group>"; };
-		F7E12F612D7E10AE005E295E /* librespot_swift_gen.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = librespot_swift_gen.h; sourceTree = "<group>"; };
-		F7E12F692D7E10AE005E295E /* lib.rs */ = {isa = PBXFileReference; lastKnownFileType = text; path = lib.rs; sourceTree = "<group>"; };
-		F7E1720A2D7E10AE005E295E /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
-		F7E1720B2D7E10AE005E295E /* build.rs */ = {isa = PBXFileReference; lastKnownFileType = text; path = build.rs; sourceTree = "<group>"; };
-		F7E1720C2D7E10AE005E295E /* Cargo.lock */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cargo.lock; sourceTree = "<group>"; };
-		F7E1720D2D7E10AE005E295E /* Cargo.toml */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cargo.toml; sourceTree = "<group>"; };
-		F7E1720E2D7E10AE005E295E /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
-		F7E1720F2D7E10AE005E295E /* rust-toolchain.toml */ = {isa = PBXFileReference; lastKnownFileType = text; path = "rust-toolchain.toml"; sourceTree = "<group>"; };
-		F7E1B4B62D7E11ED005E295E /* librespot_swift_gen.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = librespot_swift_gen.xcframework; path = ../rust/lib/librespot_swift_gen.xcframework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -98,16 +113,77 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F736C4C02D8620B500248303 /* librespot_swift_gen.a in Frameworks */,
 				F759937D2D7E481B00ACB3ED /* CoreAudio.framework in Frameworks */,
 				F759937F2D7E482600ACB3ED /* SystemConfiguration.framework in Frameworks */,
 				F759937B2D7E481400ACB3ED /* AudioUnit.framework in Frameworks */,
-				F75993912D7E4B1C00ACB3ED /* librespot_swift_gen.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		F736C4A72D86206800248303 /* respot_swift_gen */ = {
+			isa = PBXGroup;
+			children = (
+				F736C4A52D86206800248303 /* respot_swift_gen.h */,
+				F736C4A62D86206800248303 /* respot_swift_gen.swift */,
+			);
+			path = respot_swift_gen;
+			sourceTree = "<group>";
+		};
+		F736C4AA2D86206800248303 /* generated */ = {
+			isa = PBXGroup;
+			children = (
+				F736C4A72D86206800248303 /* respot_swift_gen */,
+				F736C4A82D86206800248303 /* SwiftBridgeCore.h */,
+				F736C4A92D86206800248303 /* SwiftBridgeCore.swift */,
+			);
+			path = generated;
+			sourceTree = "<group>";
+		};
+		F736C4AC2D86206800248303 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				F736C4AB2D86206800248303 /* librespot_swift_gen.h */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		F736C4AE2D86206800248303 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				F736C4AD2D86206800248303 /* lib.rs */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
+		F736C4B62D86206800248303 /* rust */ = {
+			isa = PBXGroup;
+			children = (
+				F736C4AA2D86206800248303 /* generated */,
+				F736C4AC2D86206800248303 /* include */,
+				F736C4AE2D86206800248303 /* src */,
+				F736C4AF2D86206800248303 /* .gitignore */,
+				F736C4B02D86206800248303 /* build.rs */,
+				F736C4B12D86206800248303 /* Cargo.lock */,
+				F736C4B22D86206800248303 /* Cargo.toml */,
+				F736C4B32D86206800248303 /* Makefile */,
+				F736C4B42D86206800248303 /* respot_swift_gen.xcodeproj */,
+				F736C4B52D86206800248303 /* rust-toolchain.toml */,
+			);
+			name = rust;
+			path = ../rust;
+			sourceTree = SOURCE_ROOT;
+		};
+		F736C4B72D86206800248303 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F736C4BB2D86206800248303 /* librespot_swift_gen.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		F759B7F12D7E80D700ACB3ED /* ios */ = {
 			isa = PBXGroup;
 			children = (
@@ -147,7 +223,7 @@
 			children = (
 				F7E12EFF2D7DF9D0005E295E /* LibrespotSwift */,
 				F759B7FA2D7E80D700ACB3ED /* src */,
-				F7E172102D7E10AE005E295E /* rust */,
+				F736C4B62D86206800248303 /* rust */,
 				F7E1B4B52D7E11ED005E295E /* Frameworks */,
 				F7E12EFE2D7DF9D0005E295E /* Products */,
 			);
@@ -161,65 +237,12 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		F7E12F5D2D7E10AE005E295E /* respot_swift_gen */ = {
-			isa = PBXGroup;
-			children = (
-				F7E12F5B2D7E10AE005E295E /* respot_swift_gen.h */,
-				F7E12F5C2D7E10AE005E295E /* respot_swift_gen.swift */,
-			);
-			path = respot_swift_gen;
-			sourceTree = "<group>";
-		};
-		F7E12F602D7E10AE005E295E /* generated */ = {
-			isa = PBXGroup;
-			children = (
-				F7E12F5D2D7E10AE005E295E /* respot_swift_gen */,
-				F7E12F5E2D7E10AE005E295E /* SwiftBridgeCore.h */,
-				F7E12F5F2D7E10AE005E295E /* SwiftBridgeCore.swift */,
-			);
-			path = generated;
-			sourceTree = "<group>";
-		};
-		F7E12F622D7E10AE005E295E /* include */ = {
-			isa = PBXGroup;
-			children = (
-				F7E12F612D7E10AE005E295E /* librespot_swift_gen.h */,
-			);
-			path = include;
-			sourceTree = "<group>";
-		};
-		F7E12F6A2D7E10AE005E295E /* src */ = {
-			isa = PBXGroup;
-			children = (
-				F7E12F692D7E10AE005E295E /* lib.rs */,
-			);
-			path = src;
-			sourceTree = "<group>";
-		};
-		F7E172102D7E10AE005E295E /* rust */ = {
-			isa = PBXGroup;
-			children = (
-				F7E12F602D7E10AE005E295E /* generated */,
-				F7E12F622D7E10AE005E295E /* include */,
-				F7E12F6A2D7E10AE005E295E /* src */,
-				F7E1720A2D7E10AE005E295E /* .gitignore */,
-				F7E1720B2D7E10AE005E295E /* build.rs */,
-				F7E1720C2D7E10AE005E295E /* Cargo.lock */,
-				F7E1720D2D7E10AE005E295E /* Cargo.toml */,
-				F7E1720E2D7E10AE005E295E /* Makefile */,
-				F7E1720F2D7E10AE005E295E /* rust-toolchain.toml */,
-			);
-			name = rust;
-			path = ../rust;
-			sourceTree = SOURCE_ROOT;
-		};
 		F7E1B4B52D7E11ED005E295E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 				F759937E2D7E482600ACB3ED /* SystemConfiguration.framework */,
 				F759937C2D7E481B00ACB3ED /* CoreAudio.framework */,
 				F759937A2D7E481400ACB3ED /* AudioUnit.framework */,
-				F7E1B4B62D7E11ED005E295E /* librespot_swift_gen.xcframework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -231,8 +254,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F75993782D7E461A00ACB3ED /* SwiftBridgeCore.h in Headers */,
-				F75993792D7E461A00ACB3ED /* respot_swift_gen.h in Headers */,
+				F736C4BD2D86208800248303 /* SwiftBridgeCore.h in Headers */,
+				F736C4BF2D86209600248303 /* respot_swift_gen.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -243,15 +266,16 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = F7E12F052D7DF9D0005E295E /* Build configuration list for PBXNativeTarget "LibrespotSwift" */;
 			buildPhases = (
-				F7E12EF82D7DF9D0005E295E /* Headers */,
 				F7E12EF92D7DF9D0005E295E /* Sources */,
 				F75993932D7E4B1C00ACB3ED /* Embed Frameworks */,
 				F7E12EFA2D7DF9D0005E295E /* Frameworks */,
 				F7E12EFB2D7DF9D0005E295E /* Resources */,
+				F7E12EF82D7DF9D0005E295E /* Headers */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				F736C4C22D8620BA00248303 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				F7E12EFF2D7DF9D0005E295E /* LibrespotSwift */,
@@ -288,12 +312,28 @@
 			minimizedProjectReferenceProxies = 1;
 			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = F736C4B72D86206800248303 /* Products */;
+					ProjectRef = F736C4B42D86206800248303 /* respot_swift_gen.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				F7E12EFC2D7DF9D0005E295E /* LibrespotSwift */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		F736C4BB2D86206800248303 /* librespot_swift_gen.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = librespot_swift_gen.a;
+			remoteRef = F736C4BA2D86206800248303 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		F7E12EFB2D7DF9D0005E295E /* Resources */ = {
@@ -310,11 +350,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F7E1B4B12D7E1167005E295E /* SwiftBridgeCore.swift in Sources */,
-				F7E1B4B22D7E116B005E295E /* respot_swift_gen.swift in Sources */,
 				F759B7FB2D7E80D700ACB3ED /* LibrespotIOSProgressView.swift in Sources */,
 				F759B7FC2D7E80D700ACB3ED /* LibrespotIOSAuthViewController.swift in Sources */,
 				F759B7FD2D7E80D700ACB3ED /* LibrespotIOSWebViewController.swift in Sources */,
+				F736C4BC2D86208300248303 /* SwiftBridgeCore.swift in Sources */,
+				F736C4BE2D86209100248303 /* respot_swift_gen.swift in Sources */,
 				F759B7FE2D7E80D700ACB3ED /* LibrespotPlayerEvents.swift in Sources */,
 				F759B7FF2D7E80D700ACB3ED /* LibrespotLoginOptions.swift in Sources */,
 				F759B8002D7E80D700ACB3ED /* LibrespotSession.swift in Sources */,
@@ -326,6 +366,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		F736C4C22D8620BA00248303 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "respot_swift_gen.a (static library)";
+			targetProxy = F736C4C12D8620BA00248303 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		F7E12F062D7DF9D0005E295E /* Debug */ = {

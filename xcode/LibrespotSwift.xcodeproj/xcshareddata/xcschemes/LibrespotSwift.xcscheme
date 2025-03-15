@@ -6,25 +6,6 @@
       parallelizeBuildables = "YES"
       buildImplicitDependencies = "YES"
       buildArchitectures = "Automatic">
-      <PreActions>
-         <ExecutionAction
-            ActionType = "Xcode.IDEStandardExecutionActionsCore.ExecutionActionType.ShellScriptAction">
-            <ActionContent
-               title = "Run Script"
-               scriptText = "if [ -z &quot;$ACTION&quot; ] || [ &quot;$ACTION&quot; == &quot;build&quot; ]; then&#10;&#9;ACTION=&#10;&#9;if [ -z &quot;$(which cargo)&quot; ] || [ -z &quot;$(which cmake)&quot; ]; then&#10;&#9;&#9;&gt;&amp;2 echo &quot;Sourcing from bashrc to ensure environment variables are set&quot;&#10;&#9;&#9;source ~/.bashrc&#10;&#9;fi&#10;fi&#10;cd &quot;${PROJECT_DIR}/../rust&quot; || exit $?&#10;export -n SDKROOT&#10;export -n SDK_DIR&#10;export -n SDK_NAME&#10;export -n SDK_NAMES&#10;export -n DEPLOYMENT_TARGET_SETTING_NAME&#10;export -n DEPLOYMENT_TARGET_SUGGESTED_VALUES&#10;export -n DEPLOYMENT_TARGET&#10;export -n XROS_DEPLOYMENT_TARGET&#10;make $ACTION || exit $?&#10;"
-               shellToInvoke = "/bin/bash">
-               <EnvironmentBuildable>
-                  <BuildableReference
-                     BuildableIdentifier = "primary"
-                     BlueprintIdentifier = "F7E12EFC2D7DF9D0005E295E"
-                     BuildableName = "LibrespotSwift.framework"
-                     BlueprintName = "LibrespotSwift"
-                     ReferencedContainer = "container:LibrespotSwift.xcodeproj">
-                  </BuildableReference>
-               </EnvironmentBuildable>
-            </ActionContent>
-         </ExecutionAction>
-      </PreActions>
       <BuildActionEntries>
          <BuildActionEntry
             buildForTesting = "YES"
