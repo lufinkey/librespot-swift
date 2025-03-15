@@ -45,7 +45,7 @@ public class LibrespotUtils {
 		// Convert the array of bytes into data.
 		let bytes = Data(hash)
 		// Base-64 URL-encode the bytes.
-		return base64URLEncodedString(data)
+		return base64URLEncodedString(bytes)
 	}
 	
 	static func base64URLEncodedString(_ data: Data, options: Data.Base64EncodingOptions = []) -> String {
@@ -53,5 +53,18 @@ public class LibrespotUtils {
 			.replacingOccurrences(of: "+", with: "-")
 			.replacingOccurrences(of: "/", with: "_")
 			.replacingOccurrences(of: "=", with: "")
+	}
+	
+	
+	static func runOnDispatchQueue(_ queue: DispatchQueue, action: @escaping () -> Void) {
+		if OperationQueue.current?.underlyingQueue === queue {
+			action()
+		} else {
+			queue.async(execute: action)
+		}
+	}
+	
+	static func runOnMainQueue(_ action: @escaping () -> Void) {
+		runOnDispatchQueue(DispatchQueue.main, action: action);
 	}
 }

@@ -9,14 +9,9 @@ public class Librespot: NSObject {
 	private var core: LibrespotCore;
 	private var eventReceiver: LibrespotPlayerEventReceiver? = nil;
 	private var authorizationState = LibrespotUtils.randomURLSafe(length: 128);
-	private var codeVerifier: String;
-	private var codeChallenge: String;
 	
 	@objc
 	public override init() {
-		self.codeVerifier = LibrespotUtils.randomURLSafe(length: 128)
-		self.codeChallenge = LibrespotUtils.makeCodeChallenge(codeVerifier: codeVerifier)
-		
 		let fileManager = FileManager.default;
 		let credentialsPath = fileManager.urls(for: .libraryDirectory, in: .userDomainMask)
 			.first?.appendingPathComponent("Preferences/librespot_session").absoluteString;
@@ -29,34 +24,43 @@ public class Librespot: NSObject {
 		super.init()
 	}
 	
-	@objc(authenticateWithClientId:scopes:redirectURL:tokenSwapURL:showDialog:completionHandler:)
+	@objc(authenticateWithClientId:scopes:redirectURL:tokenSwapURL:tokenRefreshURL:loginUserAgent:params:completionHandler:)
 	public func authenticate(
-		clientId: String?,
+		clientId: String,
 		scopes: [String],
-		redirectURL: URL?,
-		tokenSwapURL: URL?,
-		showDialog: Bool) async throws {
-		//
+		redirectURL: URL,
+		tokenSwapURL: URL? = nil,
+		tokenRefreshURL: URL? = nil,
+		loginUserAgent: String? = nil,
+		params: [String:Any]? = nil) async throws -> LibrespotSession? {
+		return try await self.authenticate(LibrespotLoginOptions(
+			clientID: clientId,
+			redirectURL: redirectURL,
+			scopes: scopes,
+			tokenSwapURL: tokenSwapURL,
+			tokenRefreshURL: tokenRefreshURL,
+			loginUserAgent: loginUserAgent,
+			params: params))
 	}
 	
 	@MainActor
 	public func authenticate(_ options: LibrespotLoginOptions) async throws -> LibrespotSession? {
 		#if os(iOS)
-		let authViewController = LibrespotIOSAuthViewController(options)
-		
-		weak var weakAuthController = authViewController;
-		let dismiss: ((_ onComplete: @escaping () -> Void) -> Void) = { (onComplete) in
-			if let authController = weakAuthController, let presentingVC = authController.presentingViewController {
-				presentingVC.dismiss(animated:true) {
-					onComplete();
-				};
-			} else {
-				onComplete()
-			}
-		}
-		
 		var done = false;
 		return try await withCheckedThrowingContinuation { continuation in
+			let authViewController = LibrespotIOSAuthViewController(options)
+			
+			weak var weakAuthController = authViewController;
+			let dismiss: ((_ onComplete: @escaping () -> Void) -> Void) = { (onComplete) in
+				if let authController = weakAuthController, let presentingVC = authController.presentingViewController {
+					presentingVC.dismiss(animated:true) {
+						onComplete();
+					};
+				} else {
+					onComplete()
+				}
+			}
+			
 			authViewController.onAuthenticated = { (session) in
 				if !done {
 					done = true;
@@ -103,6 +107,7 @@ public class Librespot: NSObject {
 			topController.present(authViewController, animated: true, completion: nil);
 		}
 		#else
+		// TODO implement macOS flow
 		throw LibrespotError(kind: "NotImplemented", message: "Sorry");
 		#endif
 	}

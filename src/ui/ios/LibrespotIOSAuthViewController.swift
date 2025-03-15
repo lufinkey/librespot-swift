@@ -18,7 +18,7 @@ public class LibrespotIOSAuthViewController: UINavigationController, WKNavigatio
 	public var onCancel: (() -> Void)? = nil;
 	public var onDismissed: (() -> Void)? = nil;
 	public var onDenied: (() -> Void)? = nil;
-	public var onError: ((_ error: LibrespotError) -> Void)? = nil;
+	public var onError: ((_ error: Error) -> Void)? = nil;
 	public var onAuthenticated: ((_ session: LibrespotSession) -> Void)? = nil
 	
 	init(_ options: LibrespotLoginOptions) {
@@ -58,12 +58,13 @@ public class LibrespotIOSAuthViewController: UINavigationController, WKNavigatio
 	
 	@objc func didSelectCancelButton(_ sender: Any) {
 		self.onCancel?();
-		
 	}
 	
 	public func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
 		self.onDismissed?();
 	}
+	
+	
 	
 	static func decodeQueryString(_ queryString: String) -> [String: String] {
 		let parts = queryString.components(separatedBy: "&")
@@ -90,7 +91,7 @@ public class LibrespotIOSAuthViewController: UINavigationController, WKNavigatio
 			return [:]
 		}
 
-		var queryParams = decodeQueryString(url.query ?? "")
+		let queryParams = decodeQueryString(url.query ?? "")
 		
 		if queryParams.count > 0 {
 			return queryParams
@@ -114,7 +115,8 @@ public class LibrespotIOSAuthViewController: UINavigationController, WKNavigatio
 		return redirectURL.path == url.path
 	}
 
-	func handleRedirectURL(_ url: URL) {
+	@MainActor
+	func handleRedirectURL(_ url: URL) async {
 		let params = Self.parseOAuthQueryParams(url)
 		let state = params["state"]
 		let error = params["error"]
@@ -130,7 +132,7 @@ public class LibrespotIOSAuthViewController: UINavigationController, WKNavigatio
 			return
 		}
 		// validate state
-		if state == nil || self.xssState != state {
+		if self.xssState != state {
 			// State mismatch
 			self.onError?(LibrespotError(kind: "state_mismatch", message: "State mismatch"))
 			return;
@@ -151,25 +153,24 @@ public class LibrespotIOSAuthViewController: UINavigationController, WKNavigatio
 		} else if let code = params["code"] {
 			// Authentication code
 			guard let tokenSwapURL = self.loginOptions.tokenSwapURL else {
-				onError?(LibrespotError.missingOption("MissingOption"));
+				onError?(LibrespotError.missingOption("tokenSwapURL"));
 				return
 			}
 
 			// swap code for token
-			LibrespotAuth.swapCodeForToken(code: code, url: tokenSwapURL, onResolve: { session in
-				if session.scopes.isEmpty {
-					session.scopes = self.loginOptions.scopes
-				}
-				DispatchQueue.main.async {
-					self.onAuthenticated?(session)
-				}
-			}, onReject: { error in
-				DispatchQueue.main.async {
-					self.onError?(error)
-				}
-			});
+			let session: LibrespotSession;
+			do {
+				session = try await LibrespotAuth.retrieveAccessTokenFrom(code: code, url: tokenSwapURL);
+			} catch let error {
+				self.onError?(error);
+				return;
+			}
+			if session.scopes.isEmpty {
+				session.scopes = self.loginOptions.scopes
+			}
+			self.onAuthenticated?(session)
 		} else {
-			onError?(LibrespotError(kind: "BadResponse", message: "Missing expected parameters in redirect URL"))
+			onError?(LibrespotError.badResponse(message: "Missing expected parameters in redirect URL"));
 		}
 	}
 	
@@ -185,6 +186,19 @@ public class LibrespotIOSAuthViewController: UINavigationController, WKNavigatio
 			topController = aboveController;
 		}
 		return topController;
+	}
+	
+	
+	
+	public func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction) async -> WKNavigationActionPolicy {
+		if let url = navigationAction.request.url, self.canHandleRedirectURL(url) {
+			progressView.show(in: self.view, animated: true)
+			Task {
+				await self.handleRedirectURL(url)
+			}
+			return .cancel;
+		}
+		return .allow;
 	}
 }
 #endif

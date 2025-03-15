@@ -23,7 +23,7 @@ extension LibrespotError: Error {
 	}
 	
 	static func httpError(status: Int, message: String? = nil) -> LibrespotError {
-		return LibrespotError(kind: httpErrorKind(status: status), message: message ?? "HTTP \(status)");
+		return LibrespotError(kind: httpErrorKind(status: status), message: message ?? HTTPURLResponse.localizedString(forStatusCode: status));
 	}
 	
 	static func httpErrorKind(status: Int) -> String {

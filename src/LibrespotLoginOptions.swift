@@ -15,6 +15,10 @@ public struct LibrespotLoginOptions {
 		case S256 = "S256"
 	}
 	
+	enum ParamKey: String {
+		case ShowDialog = "show_dialog"
+	}
+	
 	var clientID: String
 	var redirectURL: URL
 	var scopes: [String]
@@ -22,6 +26,21 @@ public struct LibrespotLoginOptions {
 	var tokenRefreshURL: URL?
 	var loginUserAgent: String?
 	var params: [String: Any]?
+	
+	var showDialog: Bool? {
+		get { self.params?["show_dialog"] as? Bool }
+		set {
+			if let newValue = newValue {
+				if self.params == nil {
+					self.params = [ParamKey.ShowDialog.rawValue: newValue];
+				} else {
+					self.params![ParamKey.ShowDialog.rawValue] = newValue
+				}
+			} else {
+				self.params?.removeValue(forKey: ParamKey.ShowDialog.rawValue)
+			}
+		}
+	}
 	
 	func spotifyWebAuthenticationURL(
 		responseType: AuthResponseType,
