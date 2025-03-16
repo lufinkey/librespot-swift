@@ -15,7 +15,7 @@ Pod::Spec.new do |s|
 
 	s.source_files = "src/*.{h,m,mm,cpp,swift}", "rust/generated/**/*.{h,m,mm,cpp,swift}"
 	s.vendored_frameworks = "rust/lib/librespot_swift_gen.xcframework"
-	#s.pod_target_xcconfig = { "DEFINES_MODULE" => "YES" }
+	s.pod_target_xcconfig = { "DEFINES_MODULE" => "YES" }
 
 	s.prepare_command = <<-CMD
 		cd rust
