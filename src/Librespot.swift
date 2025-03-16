@@ -135,6 +135,7 @@ public class Librespot: NSObject {
 		return try await Self.authenticate(.default);
 	}
 	
+	@objc
 	public func login() async throws -> LibrespotSession? {
 		let session = try await Self.authenticate(self.auth.options)
 		if let session = session {
