@@ -10,6 +10,8 @@ import Foundation
 @objc
 public class LibrespotAuth: NSObject {
 	typealias RefreshCompletion = (onResolve: (_ renewed: Bool) -> Void, onReject: (_ error: LibrespotError) -> Void);
+	
+	public static let DefaultTokenRefreshEarliness: Double = 300.0;
 
 	var options: LibrespotAuthOptions
 	var tokenRefreshEarliness: Double
@@ -37,7 +39,7 @@ public class LibrespotAuth: NSObject {
 	private var lastSessionRenewalTime: DispatchTime? = nil
 	private var authRenewalTimer: Timer? = nil
 	
-	init(options: LibrespotAuthOptions, tokenRefreshEarliness: Double = 300.0, sessionUserDefaultsKey: String?) {
+	init(options: LibrespotAuthOptions, tokenRefreshEarliness: Double = DefaultTokenRefreshEarliness, sessionUserDefaultsKey: String?) {
 		self.options = options;
 		self.tokenRefreshEarliness = tokenRefreshEarliness;
 		self.sessionUserDefaultsKey = sessionUserDefaultsKey;

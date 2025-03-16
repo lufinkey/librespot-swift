@@ -14,6 +14,7 @@ public class Librespot: NSObject {
 		redirectURL: URL,
 		tokenSwapURL: URL? = nil,
 		tokenRefreshURL: URL? = nil,
+		tokenRefreshEarliness: Double = LibrespotAuth.DefaultTokenRefreshEarliness,
 		loginUserAgent: String? = nil,
 		params: [String:String]? = nil,
 		sessionUserDefaultsKey: String? = nil) {
@@ -26,16 +27,20 @@ public class Librespot: NSObject {
 				tokenRefreshURL: tokenRefreshURL,
 				loginUserAgent: loginUserAgent,
 				params: params),
+			tokenRefreshEarliness: tokenRefreshEarliness,
 			sessionUserDefaultsKey: sessionUserDefaultsKey);
 	}
 	
-	public init(authOptions: LibrespotAuthOptions, sessionUserDefaultsKey: String? = nil) {
+	public init(authOptions: LibrespotAuthOptions, tokenRefreshEarliness: Double = LibrespotAuth.DefaultTokenRefreshEarliness, sessionUserDefaultsKey: String? = nil) {
 		let fileManager = FileManager.default;
 		let audioCachePath = fileManager.urls(for: .cachesDirectory, in: .userDomainMask)
 			.first?.appendingPathComponent("librespot_audio_cache").absoluteString;
 		
 		self.core = LibrespotCore(audioCachePath);
-		self.auth = LibrespotAuth(options:authOptions, sessionUserDefaultsKey:sessionUserDefaultsKey);
+		self.auth = LibrespotAuth(
+			options: authOptions,
+			tokenRefreshEarliness: tokenRefreshEarliness,
+			sessionUserDefaultsKey: sessionUserDefaultsKey);
 		super.init()
 	}
 	
