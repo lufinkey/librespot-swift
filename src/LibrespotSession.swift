@@ -13,7 +13,7 @@ public class LibrespotSession: NSObject {
 	public var refreshToken: String?;
 	public var scopes: [String];
 	
-	@objc
+	@objc(initWithClientID:accessToken:expireDate:refreshToken:scopes:)
 	public init(clientID: String, accessToken: String, expireDate: Date, refreshToken: String?, scopes: [String]) {
 		self.clientID = clientID;
 		self.accessToken = accessToken;
@@ -56,7 +56,13 @@ public class LibrespotSession: NSObject {
 		}
 		
 		// Expiry date
-		var expireDate: Date! = data["expireDate"] as? Date
+		var expireDateAny = data["expireDate"];
+		var expireDate: Date!;
+		if let expireDateString = expireDateAny as? String {
+			expireDate = LibrespotUtils.date(fromISO8601: expireDateString)
+		} else {
+			expireDate = expireDateAny as? Date
+		}
 		if expireDate == nil {
 			guard let expireTime = data["expireTime"] as? NSNumber else {
 				throw LibrespotError.missingSessionParam("expireTime");

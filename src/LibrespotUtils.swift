@@ -67,4 +67,11 @@ public class LibrespotUtils {
 	static func runOnMainQueue(_ action: @escaping () -> Void) {
 		runOnDispatchQueue(DispatchQueue.main, action: action);
 	}
+	
+	static func date(fromISO8601 isoString: String) -> Date? {
+		let dateFormatter = DateFormatter()
+		dateFormatter.locale = Locale(identifier: "en_US_POSIX") // set locale to reliable US_POSIX
+		dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+		return dateFormatter.date(from: isoString)
+	}
 }
