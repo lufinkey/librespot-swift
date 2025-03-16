@@ -56,7 +56,7 @@ public class LibrespotSession: NSObject {
 		}
 		
 		// Expiry date
-		var expireDateAny = data["expireDate"];
+		let expireDateAny = data["expireDate"];
 		var expireDate: Date!;
 		if let expireDateString = expireDateAny as? String {
 			expireDate = LibrespotUtils.date(fromISO8601: expireDateString)
