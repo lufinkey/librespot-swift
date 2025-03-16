@@ -31,7 +31,9 @@ public class Librespot: NSObject {
 			sessionUserDefaultsKey: sessionUserDefaultsKey);
 	}
 	
-	public init(authOptions: LibrespotAuthOptions, tokenRefreshEarliness: Double = LibrespotAuth.DefaultTokenRefreshEarliness, sessionUserDefaultsKey: String? = nil) {
+	public init(authOptions: LibrespotAuthOptions,
+		tokenRefreshEarliness: Double = LibrespotAuth.DefaultTokenRefreshEarliness,
+		sessionUserDefaultsKey: String? = nil) {
 		let fileManager = FileManager.default;
 		let audioCachePath = fileManager.urls(for: .cachesDirectory, in: .userDomainMask)
 			.first?.appendingPathComponent("librespot_audio_cache").absoluteString;
@@ -205,17 +207,5 @@ public class Librespot: NSObject {
 	@objc(seekTo:)
 	public func seekTo(_ position_ms: UInt32) {
 		core.player_seek(position_ms);
-	}
-	
-	@objc(kindOfError:)
-	static func kindOf(error: NSError) -> String {
-		if let lrsError = error as? LibrespotError {
-			let kind = lrsError.kind.toString();
-			if kind.starts(with: "HTTP") {
-				return kind;
-			}
-			return "Librespot.\(kind)";
-		}
-		return error.domain;
 	}
 }

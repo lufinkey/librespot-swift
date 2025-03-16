@@ -7,7 +7,8 @@
 
 import CryptoKit
 
-public class LibrespotUtils {
+@objc
+public class LibrespotUtils: NSObject {
 	static func makeQueryString(_ params: [String: Any]) -> String {
 		var parts: [String] = []
 		
@@ -73,5 +74,17 @@ public class LibrespotUtils {
 		dateFormatter.locale = Locale(identifier: "en_US_POSIX") // set locale to reliable US_POSIX
 		dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
 		return dateFormatter.date(from: isoString)
+	}
+	
+	@objc(kindOfError:)
+	public static func kindOf(error: NSError) -> String {
+		if let lrsError = error as? LibrespotError {
+			let kind = lrsError.kind.toString();
+			if kind.starts(with: "HTTP") {
+				return kind;
+			}
+			return "Librespot.\(kind)";
+		}
+		return error.domain;
 	}
 }
