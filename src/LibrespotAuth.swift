@@ -11,9 +11,9 @@ import Foundation
 public class LibrespotAuth: NSObject {
 	typealias RefreshCompletion = (onResolve: (_ renewed: Bool) -> Void, onReject: (_ error: LibrespotError) -> Void);
 
+	var options: LibrespotAuthOptions
+	var tokenRefreshEarliness: Double
 	var sessionUserDefaultsKey: String?
-	var clientID: String?
-	var tokenRefreshURL: URL?
 	public private(set) var session: LibrespotSession?
 	
 	var isLoggedIn: Bool {
@@ -29,28 +29,30 @@ public class LibrespotAuth: NSObject {
 	}
 	
 	var canRefreshSession: Bool {
-		return session?.refreshToken != nil && tokenRefreshURL != nil;
+		return session?.refreshToken != nil && self.options.tokenRefreshURL != nil;
 	}
 	
 	private var sessionRenewalTask: Task<Bool,Error>? = nil;
 	private var sessionRenewalUntilCompleteTask: Task<Bool,Error>? = nil;
 	private var lastSessionRenewalTime: DispatchTime? = nil
+	private var authRenewalTimer: Timer? = nil
 	
-	override init() {
-		session = nil;
+	init(options: LibrespotAuthOptions, tokenRefreshEarliness: Double = 300.0, sessionUserDefaultsKey: String?) {
+		self.options = options;
+		self.tokenRefreshEarliness = tokenRefreshEarliness;
+		self.sessionUserDefaultsKey = sessionUserDefaultsKey;
+		self.session = nil;
 		super.init();
 	}
 	
-	func load(options: LibrespotLoginOptions) {
+	func load() {
 		guard let sessionUserDefaultsKey = sessionUserDefaultsKey else {
 			return;
 		}
 		let prefs = UserDefaults.standard
-		self.session = LibrespotSession.fromUserDefaults(prefs, key: sessionUserDefaultsKey)
-		
-		if session != nil {
-			self.clientID = options.clientID
-			self.tokenRefreshURL = options.tokenRefreshURL
+		let session = LibrespotSession.fromUserDefaults(prefs, key: sessionUserDefaultsKey)
+		if let session = session {
+			self.startSession(session, save:false);
 		}
 	}
 	
@@ -58,24 +60,24 @@ public class LibrespotAuth: NSObject {
 		guard let sessionUserDefaultsKey = sessionUserDefaultsKey else { return }
 		let prefs = UserDefaults.standard
 		if let session = session {
-			session.saveToUserDefaults(prefs, key: sessionUserDefaultsKey)
+			session.saveToUserDefaults(prefs, key: sessionUserDefaultsKey);
 		} else {
-			prefs.removeObject(forKey: sessionUserDefaultsKey)
+			prefs.removeObject(forKey: sessionUserDefaultsKey);
 		}
 	}
 	
-	func startSession(_ session: LibrespotSession, options: LibrespotLoginOptions) {
-		self.session = session
-		self.clientID = options.clientID
-		self.tokenRefreshURL = options.tokenRefreshURL
-		self.save()
+	func startSession(_ session: LibrespotSession, save: Bool = true) {
+		self.session = session;
+		if save {
+			self.save();
+		}
+		self.scheduleAuthRenewalTimer();
 	}
 	
 	func clearSession() {
-		session = nil
-		clientID = nil
-		tokenRefreshURL = nil
-		self.save()
+		self.stopAuthRenewalTimer();
+		self.session = nil;
+		self.save();
 	}
 	
 	func clearCookies(_ completion: (() -> Void)? = nil) {
@@ -92,11 +94,55 @@ public class LibrespotAuth: NSObject {
 		}
 	}
 	
+	@discardableResult
+	private func scheduleAuthRenewalTimer() -> Bool {
+		guard self.canRefreshSession, let session = self.session else {
+			// Can't perform token refresh
+			return false
+		}
+
+		let now = Date().timeIntervalSince1970
+		let expirationTime = session.expireDate.timeIntervalSince1970
+		let timeDiff = expirationTime - now
+		let renewalTimeDiff = (expirationTime - self.tokenRefreshEarliness) - now
+		
+		if timeDiff <= 30.0 || timeDiff <= (self.tokenRefreshEarliness + 30.0) || renewalTimeDiff <= 0.0 {
+			authRenewalTimerDidFire()
+		} else {
+			self.authRenewalTimer?.invalidate()
+			let timer = Timer(
+				timeInterval: renewalTimeDiff,
+				target: self,
+				selector: #selector(authRenewalTimerDidFire),
+				userInfo: nil,
+				repeats: false)
+			RunLoop.current.add(timer, forMode: .common)
+			self.authRenewalTimer = timer
+		}
+		return true;
+	}
+
+	@objc
+	private func authRenewalTimerDidFire() {
+		Task {
+			do {
+				let _ = try await self.renewSession(waitForDefinitiveResponse: true);
+			} catch let error {
+				NSLog("Librespot session refresh failed: \(error.localizedDescription)")
+			}
+		}
+	}
+
+	func stopAuthRenewalTimer() {
+		self.authRenewalTimer?.invalidate()
+		self.authRenewalTimer = nil
+	}
+	
 	func renewSessionIfNeeded(waitForDefinitiveResponse: Bool) async throws -> Bool {
 		guard let session = self.session, !session.isValid else {
 			return false
 		}
-		guard session.refreshToken != nil || self.tokenRefreshURL == nil else {
+		guard session.refreshToken != nil || self.options.tokenRefreshURL == nil else {
 			// TODO clear the session maybe?
 			throw LibrespotError(kind: "SessionExpired", message: "The session has expired")
 		}
@@ -106,7 +152,8 @@ public class LibrespotAuth: NSObject {
 	func renewSession(waitForDefinitiveResponse: Bool) async throws -> Bool {
 		guard let session = self.session, self.canRefreshSession,
 			let refreshToken = session.refreshToken,
-			let tokenRefreshURL = self.tokenRefreshURL else {
+			let tokenRefreshURL = self.options.tokenRefreshURL
+		else {
 			return false;
 		}
 		if waitForDefinitiveResponse {
@@ -138,8 +185,7 @@ public class LibrespotAuth: NSObject {
 				clientID: session.clientID,
 				scopes: session.scopes,
 				url: tokenRefreshURL);
-			self.session = newSession;
-			self.save();
+			self.startSession(newSession)
 			return true
 		}
 		self.sessionRenewalTask = refreshTask;
@@ -192,7 +238,7 @@ public class LibrespotAuth: NSObject {
 	}
 	
 	private static func refreshSession(withToken refreshToken: String, clientID: String, scopes: [String], url: URL) async throws -> LibrespotSession {
-		var params = [
+		let params = [
 			"grant_type": "refresh_token",
 			"client_id": clientID,
 			"refresh_token": refreshToken

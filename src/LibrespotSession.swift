@@ -13,7 +13,8 @@ public class LibrespotSession: NSObject {
 	public var refreshToken: String?;
 	public var scopes: [String];
 	
-	@objc public init(clientID: String, accessToken: String, expireDate: Date, refreshToken: String?, scopes: [String]) {
+	@objc
+	public init(clientID: String, accessToken: String, expireDate: Date, refreshToken: String?, scopes: [String]) {
 		self.clientID = clientID;
 		self.accessToken = accessToken;
 		self.expireDate = expireDate;

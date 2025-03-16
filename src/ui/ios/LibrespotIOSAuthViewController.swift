@@ -10,7 +10,7 @@ import UIKit
 import WebKit
 
 public class LibrespotIOSAuthViewController: UINavigationController, WKNavigationDelegate, UIAdaptivePresentationControllerDelegate {
-	private let loginOptions: LibrespotLoginOptions
+	private let loginOptions: LibrespotAuthOptions
 	private let progressView: LibrespotIOSProgressView = LibrespotIOSProgressView()
 	private let webViewController = LibrespotIOSWebViewController()
 	private let xssState: String = LibrespotUtils.randomURLSafe(length: 128)
@@ -22,7 +22,7 @@ public class LibrespotIOSAuthViewController: UINavigationController, WKNavigatio
 	public var onError: ((_ error: Error) -> Void)? = nil;
 	public var onAuthenticated: ((_ session: LibrespotSession) -> Void)? = nil
 	
-	init(_ options: LibrespotLoginOptions) {
+	init(_ options: LibrespotAuthOptions) {
 		self.loginOptions = options;
 		super.init(rootViewController: webViewController);
 	}

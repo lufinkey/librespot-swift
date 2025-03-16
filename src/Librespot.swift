@@ -2,50 +2,62 @@ import Foundation
 
 @objc
 public class Librespot: NSObject {
-	private static let oauthPort = 5165;
-	private static let loginCallbackURL: URL = URL(
-		string: "http://127.0.0.1:\(oauthPort)/login")!;
-	
-	private var core: LibrespotCore;
+	private let core: LibrespotCore;
+	private let auth: LibrespotAuth;
 	private var eventReceiver: LibrespotPlayerEventReceiver? = nil;
 	private var authorizationState = LibrespotUtils.randomURLSafe(length: 128);
 	
 	@objc
-	public override init() {
-		let fileManager = FileManager.default;
-		let credentialsPath = fileManager.urls(for: .libraryDirectory, in: .userDomainMask)
-			.first?.appendingPathComponent("Preferences/librespot_session").absoluteString;
-			let audioCachePath = fileManager.urls(for: .cachesDirectory, in: .userDomainMask)
-			.first?.appendingPathComponent("librespot_audio_cache").absoluteString;
-		
-		self.core = LibrespotCore(
-			credentialsPath,
-			audioCachePath);
-		super.init()
-	}
-	
-	@objc(authenticateWithClientId:scopes:redirectURL:tokenSwapURL:tokenRefreshURL:loginUserAgent:params:completionHandler:)
-	@MainActor
-	public static func authenticate(
-		clientId: String,
+	public convenience init(
+		clientID: String,
 		scopes: [String],
 		redirectURL: URL,
 		tokenSwapURL: URL? = nil,
 		tokenRefreshURL: URL? = nil,
 		loginUserAgent: String? = nil,
+		params: [String:String]? = nil,
+		sessionUserDefaultsKey: String? = nil) {
+		self.init(
+			authOptions: LibrespotAuthOptions(
+				clientID: clientID,
+				redirectURL: redirectURL,
+				scopes: scopes,
+				tokenSwapURL: tokenSwapURL,
+				tokenRefreshURL: tokenRefreshURL,
+				loginUserAgent: loginUserAgent,
+				params: params),
+			sessionUserDefaultsKey: sessionUserDefaultsKey);
+	}
+	
+	public init(authOptions: LibrespotAuthOptions, sessionUserDefaultsKey: String? = nil) {
+		let fileManager = FileManager.default;
+		let audioCachePath = fileManager.urls(for: .cachesDirectory, in: .userDomainMask)
+			.first?.appendingPathComponent("librespot_audio_cache").absoluteString;
+		
+		self.core = LibrespotCore(audioCachePath);
+		self.auth = LibrespotAuth(options:authOptions, sessionUserDefaultsKey:sessionUserDefaultsKey);
+		super.init()
+	}
+	
+	@objc(authenticateWithClientId:scopes:redirectURL:tokenSwapURL:loginUserAgent:params:completionHandler:)
+	public static func authenticate(
+		clientID: String,
+		scopes: [String],
+		redirectURL: URL,
+		tokenSwapURL: URL? = nil,
+		loginUserAgent: String? = nil,
 		params: [String:String]? = nil) async throws -> LibrespotSession? {
-		return try await Self.authenticate(LibrespotLoginOptions(
-			clientID: clientId,
+		return try await Self.authenticate(LibrespotAuthOptions(
+			clientID: clientID,
 			redirectURL: redirectURL,
 			scopes: scopes,
 			tokenSwapURL: tokenSwapURL,
-			tokenRefreshURL: tokenRefreshURL,
 			loginUserAgent: loginUserAgent,
-			params: params))
+			params: params));
 	}
 	
 	@MainActor
-	public static func authenticate(_ options: LibrespotLoginOptions) async throws -> LibrespotSession? {
+	public static func authenticate(_ options: LibrespotAuthOptions) async throws -> LibrespotSession? {
 		#if os(iOS)
 		var done = false;
 		return try await withCheckedThrowingContinuation { continuation in
@@ -114,21 +126,31 @@ public class Librespot: NSObject {
 	}
 	
 	@objc
-	@MainActor
 	public static func authenticate() async throws -> LibrespotSession? {
 		return try await Self.authenticate(.default);
 	}
-
-	@objc(loginWithAccessToken:storeCredentials:completionHandler:)
-	public func login(accessToken: String, storeCredentials: Bool) async throws {
-		try await core.login_with_accesstoken(accessToken, storeCredentials);
+	
+	public func login() async throws -> LibrespotSession? {
+		let session = try await Self.authenticate(self.auth.options)
+		if let session = session {
+			try await core.login_with_accesstoken(session.accessToken);
+			self.auth.startSession(session);
+		}
+		return session;
 	}
-
+	
+	@objc(loginWithSession:completionHandler:)
+	public func login(session: LibrespotSession) async throws {
+		try await core.login_with_accesstoken(session.accessToken);
+		self.auth.startSession(session);
+	}
+	
 	@objc
 	public func logout() {
+		self.auth.clearSession();
 		core.logout();
 	}
-
+	
 	@objc(initPlayer:)
 	public func initPlayer(_ listener: LibrespotPlayerEventListener) {
 		let initted = core.player_init();
@@ -141,19 +163,19 @@ public class Librespot: NSObject {
 			await evtReceiver.pollEvents();
 		}
 	}
-
+	
 	@objc
 	public func deinitPlayer() {
 		self.eventReceiver?.dispose();
 		self.eventReceiver = nil;
 		core.player_deinit();
 	}
-
+	
 	@objc(loadTrackURI:startPlaying:position:)
 	public func load(trackURI: String, startPlaying: Bool, position: UInt32) {
 		core.player_load(trackURI,startPlaying,position);
 	}
-
+	
 	@objc(preloadTrackURI:)
 	public func preload(trackURI: String) {
 		core.player_preload(trackURI);

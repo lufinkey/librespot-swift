@@ -5,7 +5,7 @@
 //  Created by Luis Finke on 3/9/25.
 //
 
-public struct LibrespotLoginOptions {
+public struct LibrespotAuthOptions {
 	enum AuthResponseType: String {
 		case Code = "code"
 		case Token = "token"
@@ -48,8 +48,8 @@ public struct LibrespotLoginOptions {
 		}
 	}
 	
-	static var `default`: LibrespotLoginOptions {
-		return LibrespotLoginOptions(
+	static var `default`: LibrespotAuthOptions {
+		return LibrespotAuthOptions(
 			clientID: "65b708073fc0480ea92a077233ca87bd",// librespot_default_client_id().toString(),
 			redirectURL: URL(string:"http://127.0.0.1:5165/login")!,
 			scopes: ["streaming"],
@@ -97,7 +97,7 @@ public struct LibrespotLoginOptions {
 		return components?.url
 	}
 	
-	static func from(dictionary dict: [String: Any], fallback fallbackDict: [String: Any], ignore: [String] = []) throws -> LibrespotLoginOptions {
+	static func from(dictionary dict: [String: Any], fallback fallbackDict: [String: Any], ignore: [String] = []) throws -> LibrespotAuthOptions {
 		
 		// Extract values from dict or fallbackDict
 		let clientID = dict["clientID"] as? String ?? fallbackDict["clientID"] as? String
@@ -127,7 +127,7 @@ public struct LibrespotLoginOptions {
 		}
 		
 		// Create options object at the end
-		return LibrespotLoginOptions(
+		return LibrespotAuthOptions(
 			clientID: validClientID,
 			redirectURL: validRedirectURL,
 			scopes: validScopes,
