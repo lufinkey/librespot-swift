@@ -70,18 +70,14 @@ public class LibrespotUtils: NSObject {
 	}
 	
 	@objc
-	static func getErrorKind(_ error: Error) -> String {
-		switch error {
-		case let lrsError as LibrespotError:
+	static func kindOf(error: NSError) -> String {
+		if let lrsError = error as? LibrespotError {
 			let kind = lrsError.kind.toString();
 			if kind.starts(with: "HTTP") {
 				return kind;
 			}
 			return "Librespot.\(kind)";
-		case let nsError as NSError:
-			return nsError.domain;
-		default:
-			return "Unknown"
 		}
+		return error.domain;
 	}
 }
