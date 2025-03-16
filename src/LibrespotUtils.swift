@@ -7,8 +7,7 @@
 
 import CryptoKit
 
-@objc
-public class LibrespotUtils: NSObject {
+public class LibrespotUtils {
 	static func makeQueryString(_ params: [String: Any]) -> String {
 		var parts: [String] = []
 		
@@ -67,17 +66,5 @@ public class LibrespotUtils: NSObject {
 	
 	static func runOnMainQueue(_ action: @escaping () -> Void) {
 		runOnDispatchQueue(DispatchQueue.main, action: action);
-	}
-	
-	@objc
-	static func kindOf(error: NSError) -> String {
-		if let lrsError = error as? LibrespotError {
-			let kind = lrsError.kind.toString();
-			if kind.starts(with: "HTTP") {
-				return kind;
-			}
-			return "Librespot.\(kind)";
-		}
-		return error.domain;
 	}
 }
