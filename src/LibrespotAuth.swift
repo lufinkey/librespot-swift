@@ -11,6 +11,7 @@ import Foundation
 public class LibrespotAuth: NSObject {
 	typealias RefreshCompletion = (onResolve: (_ renewed: Bool) -> Void, onReject: (_ error: LibrespotError) -> Void);
 	
+	@objc
 	public static let DefaultTokenRefreshEarliness: Double = 300.0;
 
 	var options: LibrespotAuthOptions
