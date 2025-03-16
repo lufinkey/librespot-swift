@@ -43,6 +43,7 @@ public class LibrespotSession: NSObject {
 		return try? fromDictionary(sessionData)
 	}
 	
+	@objc
 	static func fromDictionary(_ data: [String: Any]) throws -> LibrespotSession {
 		// Client ID
 		guard let clientID = data["clientID"] as? String else {
