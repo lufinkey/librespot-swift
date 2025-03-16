@@ -9,24 +9,25 @@ public class Librespot: NSObject {
 	
 	@objc
 	public convenience init(
-		clientID: String,
-		scopes: [String],
-		redirectURL: URL,
+		clientID: String?,
+		scopes: [String]?,
+		redirectURL: URL?,
 		tokenSwapURL: URL? = nil,
 		tokenRefreshURL: URL? = nil,
 		tokenRefreshEarliness: Double = LibrespotAuth.DefaultTokenRefreshEarliness,
 		loginUserAgent: String? = nil,
 		params: [String:String]? = nil,
 		sessionUserDefaultsKey: String? = nil) {
+		let defaultAuthOptions = LibrespotAuthOptions.default;
 		self.init(
 			authOptions: LibrespotAuthOptions(
-				clientID: clientID,
-				redirectURL: redirectURL,
-				scopes: scopes,
-				tokenSwapURL: tokenSwapURL,
-				tokenRefreshURL: tokenRefreshURL,
-				loginUserAgent: loginUserAgent,
-				params: params),
+				clientID: clientID ?? defaultAuthOptions.clientID,
+				redirectURL: redirectURL ?? defaultAuthOptions.redirectURL,
+				scopes: scopes ?? defaultAuthOptions.scopes,
+				tokenSwapURL: tokenSwapURL ?? defaultAuthOptions.tokenSwapURL,
+				tokenRefreshURL: tokenRefreshURL ?? defaultAuthOptions.tokenRefreshURL,
+				loginUserAgent: loginUserAgent ?? defaultAuthOptions.loginUserAgent,
+				params: params ?? defaultAuthOptions.params),
 			tokenRefreshEarliness: tokenRefreshEarliness,
 			sessionUserDefaultsKey: sessionUserDefaultsKey);
 	}

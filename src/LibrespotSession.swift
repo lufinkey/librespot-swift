@@ -64,10 +64,10 @@ public class LibrespotSession: NSObject {
 			expireDate = expireDateAny as? Date
 		}
 		if expireDate == nil {
-			guard let expireTime = data["expireTime"] as? NSNumber else {
+			guard let expireTime = data["expireTime"] as? Double else {
 				throw LibrespotError.missingSessionParam("expireTime");
 			}
-			expireDate = Date(timeIntervalSince1970: expireTime.doubleValue / 1000.0);
+			expireDate = Date(timeIntervalSince1970: expireTime / 1000.0);
 		}
 		
 		// Refresh token
