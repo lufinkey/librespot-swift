@@ -44,7 +44,7 @@ public class LibrespotSession: NSObject {
 	}
 	
 	@objc
-	static func fromDictionary(_ data: [String: Any]) throws -> LibrespotSession {
+	public static func fromDictionary(_ data: [String: Any]) throws -> LibrespotSession {
 		// Client ID
 		guard let clientID = data["clientID"] as? String else {
 			throw LibrespotError.missingSessionParam("clientID");
