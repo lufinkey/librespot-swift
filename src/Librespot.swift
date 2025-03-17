@@ -85,6 +85,18 @@ public class Librespot: NSObject {
 	
 	@MainActor
 	public static func authenticate(_ options: LibrespotAuthOptions) async throws -> LibrespotSession? {
+		/*let scopesVec = RustVec<RustString>();
+		for scope in options.scopes {
+			scopesVec.push(value: RustString(scope));
+		}
+		let sessionData = try await librespot_authenticate(RustString(options.clientID), RustString(options.redirectURL.absoluteString), scopesVec);
+		return LibrespotSession(
+			clientID: options.clientID,
+			accessToken: sessionData.access_token.toString(),
+			expireDate: Date(timeIntervalSince1970: sessionData.expires_in),
+			refreshToken: sessionData.refresh_token.toString(),
+			scopes: sessionData.scopes.map({ $0.as_str().toString() }));*/
+		
 		#if os(iOS) || os(macOS)
 		var done = false;
 		return try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<LibrespotSession?,Error>) in

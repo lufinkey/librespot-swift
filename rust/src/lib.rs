@@ -1,6 +1,7 @@
 // code adapted from https://github.com/jariz/Speck/blob/master/src/lib.rs
 
 use env_logger::Env;
+use ffi::LibrespotError;
 use std::path::Path;
 use librespot::core::spotify_id::{SpotifyId, SpotifyItemType};
 use librespot::core::cache::Cache;
@@ -28,9 +29,18 @@ mod ffi {
 	}
 
 	#[swift_bridge(swift_repr = "struct")]
-	pub struct LibrespotRedirectRules {
+	struct LibrespotRedirectRules {
 		redirect_uri: String,
 		hook_uri: String,
+	}
+
+	#[swift_bridge(swift_repr = "struct")]
+	struct LibrespotSessionData {
+		pub access_token: String,
+		pub refresh_token: String,
+		pub expires_in: f64,
+		pub token_type: String,
+		pub scopes: Vec<String>,
 	}
 
 	// This is basically a redefinition of librespot's PlayerEvent beacuse of ✨ bridge reasons ✨
@@ -147,6 +157,7 @@ mod ffi {
 
 		pub fn librespot_default_client_id() -> String;
 		pub fn librespot_default_redirect_rules() -> LibrespotRedirectRules;
+		pub async fn librespot_authenticate(client_id: String, redirect_uri: String, scopes: Vec<String>) -> Result<LibrespotSessionData,LibrespotError>;
 
 		#[swift_bridge(init)]
 		fn new(
@@ -212,6 +223,30 @@ pub fn librespot_default_redirect_rules() -> ffi::LibrespotRedirectRules {
 			hook_uri: "http://127.0.0.1:5165/login".to_string(),
 		}
 	}
+}
+
+pub async fn librespot_authenticate(client_id: String, redirect_uri: String, scopes: Vec<String>) -> Result<ffi::LibrespotSessionData, LibrespotError> {
+	let client = librespot::oauth::OAuthClientBuilder::new(client_id.as_str(), redirect_uri.as_str(), scopes.iter().map(|s| s.as_str()).collect())
+		.open_in_browser()
+		.with_custom_message("")
+		.build()
+		.map_err(|err| ffi::LibrespotError {
+			kind: "OAuthError".to_string(),
+			message: err.to_string(),
+		})?;
+
+	let token = client.get_access_token_async().await.map_err(|err| ffi::LibrespotError {
+		kind: "TokenError".to_string(),
+		message: err.to_string(),
+	})?;
+
+	Ok(ffi::LibrespotSessionData {
+		access_token: token.access_token,
+		refresh_token: token.refresh_token,
+		expires_in: token.expires_at.duration_since(std::time::Instant::now()).as_secs_f64(),
+		token_type: token.token_type,
+		scopes: token.scopes
+	})
 }
 
 pub struct LibrespotCore {
