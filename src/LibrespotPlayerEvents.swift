@@ -37,8 +37,8 @@ import Foundation
 	@objc(onEventShuffleChangedTo:)
 	func onEventShuffleChanged(shuffle: Bool)
 
-	@objc(onEventRepeatChangedTo:)
-	func onEventRepeatChanged(repeat: Bool)
+	@objc(onEventRepeatChangedForContext:track:)
+	func onEventRepeatChanged(context: Bool, track: Bool)
 
 	@objc(onEventAutoPlayChangedTo:)
 	func onEventAutoPlayChanged(autoPlay: Bool)
@@ -132,9 +132,10 @@ class LibrespotPlayerEventReceiver {
 			case .ShuffleChanged(let shuffle):
 				self.listener.onEventShuffleChanged(
 					shuffle: shuffle);
-			case .RepeatChanged(let `repeat`):
+			case .RepeatChanged(let context, let track):
 				self.listener.onEventRepeatChanged(
-					repeat: `repeat`);
+					context: context,
+					track: track);
 			case .AutoPlayChanged(let autoPlay):
 				self.listener.onEventAutoPlayChanged(
 					autoPlay: autoPlay);

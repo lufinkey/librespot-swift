@@ -14,7 +14,7 @@ swift-bridge-build = "0.1"
 
 [dependencies]
 swift-bridge = { version = "0.1", features = ["async"] }
-librespot = { git = "https://github.com/librespot-org/librespot.git", branch = "master" }
+librespot = { git = "https://github.com/librespot-org/librespot.git", rev = "11c3df8eb1ab2c6a8f31a02cb8833caf825f415b" }
 env_logger = "0.10.0"
 log = "0.4.17"
 serde = "1.0.214"

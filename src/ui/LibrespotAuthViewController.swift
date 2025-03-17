@@ -52,8 +52,6 @@ class LibrespotAuthViewController: LibrespotAuthViewControllerBase {
 	override public func viewDidLoad() {
 		super.viewDidLoad();
 		
-		print("redirectHookURL = \(self.loginOptions.redirectHookURL)");
-		
 		self.navigationBar.barTintColor = .black;
 		self.navigationBar.tintColor = .white;
 		self.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white];

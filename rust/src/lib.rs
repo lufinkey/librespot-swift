@@ -123,9 +123,8 @@ mod ffi {
 			shuffle: bool,
 		},
 		RepeatChanged {
-			//context: bool,
-			//track: bool,
-			repeating: bool,
+			context: bool,
+			track: bool,
 		},
 		AutoPlayChanged {
 			auto_play: bool,
@@ -366,13 +365,11 @@ impl LibrespotCore {
 					ffi::LibrespotPlayerEvent::VolumeChanged { volume }
 				}
 				PlayerEvent::RepeatChanged {
-					//context,
-					//track,
-					repeat,
+					context,
+					track,
 				} => ffi::LibrespotPlayerEvent::RepeatChanged {
-					//context: context,
-					//track: track,
-					repeating: repeat,
+					context: context,
+					track: track,
 				},
 				PlayerEvent::ShuffleChanged { shuffle } => {
 					ffi::LibrespotPlayerEvent::ShuffleChanged { shuffle }
