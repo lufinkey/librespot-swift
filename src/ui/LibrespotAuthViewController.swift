@@ -256,10 +256,10 @@ class LibrespotAuthViewController: LibrespotAuthViewControllerBase {
 	}
 	
 	public func show() -> Bool {
-		guard let topController = LibrespotIOSAuthViewController.findTopViewController() else {
+		guard let topController = Self.findTopViewController() else {
 			return false;
 		}
-		topController.present(authViewController, animated: true, completion: nil);
+		topController.present(self, animated: true, completion: nil);
 		return true;
 	}
 	
@@ -289,7 +289,6 @@ class LibrespotAuthViewController: LibrespotAuthViewControllerBase {
 	
 	
 	public func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction) async -> WKNavigationActionPolicy {
-		print("decidePolicyFor \(navigationAction.request.url)");
 		if let url = navigationAction.request.url, self.canHandleRedirectURL(url) {
 			progressView.show(in: self.view, animated: true)
 			Task {
