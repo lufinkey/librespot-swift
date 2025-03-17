@@ -51,7 +51,7 @@ public struct LibrespotAuthOptions {
 	public static var `default`: LibrespotAuthOptions {
 		return LibrespotAuthOptions(
 			clientID: "65b708073fc0480ea92a077233ca87bd",// librespot_default_client_id().toString(),
-			redirectURL: URL(string:"http://127.0.0.1/login")!,
+			redirectURL: URL(string:"http://127.0.0.1:5165/login")!,
 			scopes: ["streaming"],
 			tokenSwapURL: URL(string: "https://accounts.spotify.com/api/token")!,
 			tokenRefreshURL: URL(string: "https://accounts.spotify.com/api/token")!,
