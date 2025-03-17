@@ -144,14 +144,15 @@ mod ffi {
 
 		#[swift_bridge(init)]
 		fn new(
+			client_id: String,
 			audio_cache_path: Option<String>,
 		) -> LibrespotCore;
 
-		async fn login_with_accesstoken(&mut self, access_token: String) -> Result<(), LibrespotError>;
-		fn logout(&mut self);
+		async fn login_with_accesstoken(&mut self, access_token: String) -> Result<(),LibrespotError>;
+		async fn logout(&mut self);
 
-		fn player_init(&mut self) -> bool;
-		fn player_deinit(&mut self);
+		async fn player_init(&mut self) -> bool;
+		async fn player_deinit(&mut self);
 
 		async fn player_get_event(&mut self) -> LibrespotPlayerEventResult;
 
@@ -166,25 +167,23 @@ mod ffi {
 
 #[derive(Debug, Clone, Default)]
 struct LibrespotOptions {
+	client_id: String,
 	audio_cache_path: Option<String>,
 }
 
 fn create_session(options: &LibrespotOptions) -> Session {
-	let session_config = SessionConfig::default();
-	let cache = Cache::new(
-		None,
-		None,
-		options.audio_cache_path.as_ref().map(|p| Path::new(p.as_str())),
-		None)
-		.map_err(|e| dbg!(e))
-		.ok();
+	let mut session_config = SessionConfig::default();
+	session_config.client_id = options.client_id.clone();
+	let cache = if options.audio_cache_path.is_some() {
+		Cache::new(
+			None,
+			None,
+			Some(Path::new(options.audio_cache_path.as_ref().unwrap().as_str())),
+			None)
+			.map_err(|e| dbg!(e))
+			.ok()
+	} else { None };
 	let session = Session::new(session_config, cache);
-	return session;
-}
-
-fn create_empty_session() -> Session {
-	let session_config = SessionConfig::default();
-	let session = Session::new(session_config, None);
 	return session;
 }
 
@@ -194,7 +193,7 @@ pub fn librespot_default_client_id() -> String {
 
 pub struct LibrespotCore {
 	options: LibrespotOptions,
-	session: Session,
+	session: Option<Session>,
 	player: Option<Arc<Player>>,
 	channel: Option<PlayerEventChannel>
 }
@@ -202,6 +201,7 @@ pub struct LibrespotCore {
 impl LibrespotCore {
 
 	fn new(
+		client_id: String,
 		audio_cache_path: Option<String>,
 	) -> Self {
 		env_logger::Builder::from_env(
@@ -210,29 +210,19 @@ impl LibrespotCore {
 		.init();
 
 		let options = LibrespotOptions {
+			client_id: client_id,
 			audio_cache_path: audio_cache_path,
 		};
 
-		let session = create_session(&options);
-
 		LibrespotCore {
 			options: options,
-			session: session,
+			session: None,
 			player: None,
 			channel: None,
 		}
 	}
 
 	async fn login_with_accesstoken(&mut self, access_token: String) -> Result<(), ffi::LibrespotError> {
-		// let mut cache_dir = env::temp_dir();
-		// cache_dir.push("spotty-cache");
-		//
-		// let cache = Cache::new(Some(cache_dir), None, None, None).unwrap();
-		// let cached_credentials = cache.credentials();
-		// let credentials = match cached_credentials {
-		//     Some(s) => s,
-		//     None => Credentials::with_access_token(access_token),
-		// };
 		let credentials = Credentials::with_access_token(access_token);
 		let session = create_session(&self.options);
 		session.connect(credentials, false)
@@ -244,19 +234,19 @@ impl LibrespotCore {
 		if let Some(ref mut player) = self.player {
 			player.set_session(session.clone());
 		}
-		self.session = session;
+		self.session = Some(session);
 		Ok(())
 	}
 
-	fn logout(&mut self) {
-		let new_session = create_empty_session();
+	async fn logout(&mut self) {
+		let new_session = create_session(&self.options);
 		if let Some(ref mut player) = self.player {
 			player.set_session(new_session.clone());
 		}
-		self.session = new_session;
+		self.session = Some(new_session);
 	}
 
-	fn player_init(&mut self) -> bool {
+	async fn player_init(&mut self) -> bool {
 		if !self.player.is_none() {
 			debug!("player_init called multiple times");
 			return false;
@@ -264,7 +254,7 @@ impl LibrespotCore {
 		let mixer = SoftMixer::open(MixerConfig::default());
 		let player = Player::new(
 			PlayerConfig::default(),
-			self.session.clone(),
+			if self.session.is_some() { self.session.as_ref().unwrap().clone() } else { create_session(&self.options) },
 			mixer.get_soft_volume(),
 			move || {
 				// only rodio supported for now
@@ -279,7 +269,7 @@ impl LibrespotCore {
 		return true;
 	}
 
-	fn player_deinit(&mut self) {
+	async fn player_deinit(&mut self) {
 		if let Some(ref mut player) = self.player {
 			player.stop();
 		}

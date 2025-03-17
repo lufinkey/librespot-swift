@@ -18,13 +18,14 @@ struct ContentView: View {
 			Button("Login") {
 				Task {
 					do {
-						let session = try await Librespot.authenticate()
-						NSLog("Session \(session?.accessToken)");
+						let session = try await LibrespotShared.shared.login()
+						NSLog("Session \(session)");
 					} catch let error {
-						NSLog("\(error.localizedDescription)")
+						NSLog("Failed to login: \(error.localizedDescription)")
 					}
 				}
 			}
+			
         }
         .padding()
     }

@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		F77E95052D863F300094917C /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F77E95042D863F300094917C /* CoreAudio.framework */; };
 		F77E95092D863FC50094917C /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F77E95082D863FC50094917C /* AudioToolbox.framework */; };
+		F77E96002D87A1FB0094917C /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F77E95FF2D87A1FB0094917C /* SystemConfiguration.framework */; };
 		F79692082D861D040075C493 /* LibrespotSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F79692042D861CE90075C493 /* LibrespotSwift.framework */; };
 /* End PBXBuildFile section */
 
@@ -33,6 +34,7 @@
 		F77E95012D863ED10094917C /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.2.sdk/System/Library/Frameworks/AudioUnit.framework; sourceTree = DEVELOPER_DIR; };
 		F77E95042D863F300094917C /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.2.sdk/System/Library/Frameworks/CoreAudio.framework; sourceTree = DEVELOPER_DIR; };
 		F77E95082D863FC50094917C /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.2.sdk/System/Library/Frameworks/AudioToolbox.framework; sourceTree = DEVELOPER_DIR; };
+		F77E95FF2D87A1FB0094917C /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.2.sdk/System/Library/Frameworks/SystemConfiguration.framework; sourceTree = DEVELOPER_DIR; };
 		F79691DD2D861CC80075C493 /* LibrespotSwiftExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LibrespotSwiftExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F79691F92D861CE90075C493 /* LibrespotSwift.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = LibrespotSwift.xcodeproj; path = ../xcode/LibrespotSwift.xcodeproj; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
@@ -52,6 +54,7 @@
 			files = (
 				F77E95052D863F300094917C /* CoreAudio.framework in Frameworks */,
 				F79692082D861D040075C493 /* LibrespotSwift.framework in Frameworks */,
+				F77E96002D87A1FB0094917C /* SystemConfiguration.framework in Frameworks */,
 				F77E95092D863FC50094917C /* AudioToolbox.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -88,6 +91,7 @@
 		F79692072D861D040075C493 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				F77E95FF2D87A1FB0094917C /* SystemConfiguration.framework */,
 				F77E95082D863FC50094917C /* AudioToolbox.framework */,
 				F77E95042D863F300094917C /* CoreAudio.framework */,
 				F77E95012D863ED10094917C /* AudioUnit.framework */,

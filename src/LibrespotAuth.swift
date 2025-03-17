@@ -12,7 +12,7 @@ public class LibrespotAuth: NSObject {
 	typealias RefreshCompletion = (onResolve: (_ renewed: Bool) -> Void, onReject: (_ error: LibrespotError) -> Void);
 	
 	@objc
-	public static let DefaultTokenRefreshEarliness: Double = 300.0;
+	public static let defaultTokenRefreshEarliness: Double = 300.0;
 
 	var options: LibrespotAuthOptions
 	var tokenRefreshEarliness: Double
@@ -40,7 +40,7 @@ public class LibrespotAuth: NSObject {
 	private var lastSessionRenewalTime: DispatchTime? = nil
 	private var authRenewalTimer: Timer? = nil
 	
-	init(options: LibrespotAuthOptions, tokenRefreshEarliness: Double = DefaultTokenRefreshEarliness, sessionUserDefaultsKey: String?) {
+	init(options: LibrespotAuthOptions, tokenRefreshEarliness: Double = defaultTokenRefreshEarliness, sessionUserDefaultsKey: String?) {
 		self.options = options;
 		self.tokenRefreshEarliness = tokenRefreshEarliness;
 		self.sessionUserDefaultsKey = sessionUserDefaultsKey;
@@ -48,15 +48,18 @@ public class LibrespotAuth: NSObject {
 		super.init();
 	}
 	
-	func load() {
+	@discardableResult
+	func load() -> LibrespotSession? {
 		guard let sessionUserDefaultsKey = sessionUserDefaultsKey else {
-			return;
+			return nil;
 		}
 		let prefs = UserDefaults.standard
 		let session = LibrespotSession.fromUserDefaults(prefs, key: sessionUserDefaultsKey)
-		if let session = session {
-			self.startSession(session, save:false);
+		guard let session = session else {
+			return nil;
 		}
+		self.startSession(session, save:false);
+		return session;
 	}
 	
 	func save() {
@@ -74,13 +77,16 @@ public class LibrespotAuth: NSObject {
 		if save {
 			self.save();
 		}
+		self.stopAuthRenewalTimer();
 		self.scheduleAuthRenewalTimer();
 	}
 	
-	func clearSession() {
+	func clearSession(save: Bool = true) {
 		self.stopAuthRenewalTimer();
 		self.session = nil;
-		self.save();
+		if save {
+			self.save();
+		}
 	}
 	
 	func clearCookies(_ completion: (() -> Void)? = nil) {

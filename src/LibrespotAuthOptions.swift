@@ -6,28 +6,28 @@
 //
 
 public struct LibrespotAuthOptions {
-	enum AuthResponseType: String {
+	public enum AuthResponseType: String {
 		case Code = "code"
 		case Token = "token"
 	}
 	
-	enum CodeChallengeMethod: String {
+	public enum CodeChallengeMethod: String {
 		case S256 = "S256"
 	}
 	
-	enum ParamKey: String {
+	public enum ParamKey: String {
 		case ShowDialog = "show_dialog"
 	}
 	
-	var clientID: String
-	var redirectURL: URL
-	var scopes: [String]
-	var tokenSwapURL: URL?
-	var tokenRefreshURL: URL?
-	var loginUserAgent: String?
-	var params: [String: String]?
+	public var clientID: String
+	public var redirectURL: URL
+	public var scopes: [String]
+	public var tokenSwapURL: URL?
+	public var tokenRefreshURL: URL?
+	public var loginUserAgent: String?
+	public var params: [String: String]?
 	
-	var showDialog: Bool? {
+	public var showDialog: Bool? {
 		get {
 			if let valueStr = self.params?[ParamKey.ShowDialog.rawValue] as? String {
 				return valueStr == "true";
@@ -48,7 +48,7 @@ public struct LibrespotAuthOptions {
 		}
 	}
 	
-	static var `default`: LibrespotAuthOptions {
+	public static var `default`: LibrespotAuthOptions {
 		return LibrespotAuthOptions(
 			clientID: "65b708073fc0480ea92a077233ca87bd",// librespot_default_client_id().toString(),
 			redirectURL: URL(string:"http://127.0.0.1:5165/login")!,
@@ -59,7 +59,7 @@ public struct LibrespotAuthOptions {
 			params: [ParamKey.ShowDialog.rawValue:"true"])
 	}
 	
-	func spotifyWebAuthenticationURL(
+	public func spotifyWebAuthenticationURL(
 		responseType: AuthResponseType,
 		state: String? = nil,
 		codeChallengeMethod: CodeChallengeMethod? = nil,
@@ -97,7 +97,7 @@ public struct LibrespotAuthOptions {
 		return components?.url
 	}
 	
-	static func from(dictionary dict: [String: Any], fallback fallbackDict: [String: Any], ignore: [String] = []) throws -> LibrespotAuthOptions {
+	public static func from(dictionary dict: [String: Any], fallback fallbackDict: [String: Any], ignore: [String] = []) throws -> LibrespotAuthOptions {
 		
 		// Extract values from dict or fallbackDict
 		let clientID = dict["clientID"] as? String ?? fallbackDict["clientID"] as? String

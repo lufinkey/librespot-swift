@@ -2,10 +2,20 @@ import Foundation
 
 @objc
 public class Librespot: NSObject {
+	@objc
+	public static let defaultAudioCachePath = FileManager.default
+		.urls(for: .cachesDirectory, in: .userDomainMask)
+		.first?.appendingPathComponent("librespot_audio_cache").absoluteString;
+	
 	private let core: LibrespotCore;
 	private let auth: LibrespotAuth;
 	private var eventReceiver: LibrespotPlayerEventReceiver? = nil;
 	private var authorizationState = LibrespotUtils.randomURLSafe(length: 128);
+	
+	@objc
+	public override convenience init() {
+		self.init(authOptions: .default);
+	}
 	
 	@objc
 	public convenience init(
@@ -14,10 +24,11 @@ public class Librespot: NSObject {
 		redirectURL: URL?,
 		tokenSwapURL: URL? = nil,
 		tokenRefreshURL: URL? = nil,
-		tokenRefreshEarliness: Double = LibrespotAuth.DefaultTokenRefreshEarliness,
+		tokenRefreshEarliness: Double = LibrespotAuth.defaultTokenRefreshEarliness,
 		loginUserAgent: String? = nil,
 		params: [String:String]? = nil,
-		sessionUserDefaultsKey: String? = nil) {
+		sessionUserDefaultsKey: String? = nil,
+		audioCachePath: String? = nil) {
 		let defaultAuthOptions = LibrespotAuthOptions.default;
 		self.init(
 			authOptions: LibrespotAuthOptions(
@@ -29,22 +40,26 @@ public class Librespot: NSObject {
 				loginUserAgent: loginUserAgent ?? defaultAuthOptions.loginUserAgent,
 				params: params ?? defaultAuthOptions.params),
 			tokenRefreshEarliness: tokenRefreshEarliness,
-			sessionUserDefaultsKey: sessionUserDefaultsKey);
+			sessionUserDefaultsKey: sessionUserDefaultsKey,
+			audioCachePath: audioCachePath);
 	}
 	
 	public init(authOptions: LibrespotAuthOptions,
-		tokenRefreshEarliness: Double = LibrespotAuth.DefaultTokenRefreshEarliness,
-		sessionUserDefaultsKey: String? = nil) {
-		let fileManager = FileManager.default;
-		let audioCachePath = fileManager.urls(for: .cachesDirectory, in: .userDomainMask)
-			.first?.appendingPathComponent("librespot_audio_cache").absoluteString;
-		
-		self.core = LibrespotCore(audioCachePath);
+		tokenRefreshEarliness: Double = LibrespotAuth.defaultTokenRefreshEarliness,
+		sessionUserDefaultsKey: String? = nil,
+		audioCachePath: String? = nil) {
+		self.core = LibrespotCore(authOptions.clientID, audioCachePath);
 		self.auth = LibrespotAuth(
 			options: authOptions,
 			tokenRefreshEarliness: tokenRefreshEarliness,
 			sessionUserDefaultsKey: sessionUserDefaultsKey);
 		super.init()
+	}
+	
+	public func loadStoredSession() async throws {
+		if let session = self.auth.load() {
+			try await self.core.login_with_accesstoken(session.accessToken);
+		}
 	}
 	
 	@objc(authenticateWithClientId:scopes:redirectURL:tokenSwapURL:loginUserAgent:params:completionHandler:)
@@ -66,15 +81,15 @@ public class Librespot: NSObject {
 	
 	@MainActor
 	public static func authenticate(_ options: LibrespotAuthOptions) async throws -> LibrespotSession? {
-		#if os(iOS)
+		#if os(iOS) || os(macOS)
 		var done = false;
-		return try await withCheckedThrowingContinuation { continuation in
-			let authViewController = LibrespotIOSAuthViewController(options)
+		return try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<LibrespotSession?,Error>) in
+			let authViewController = LibrespotAuthViewController(options);
 			
 			weak var weakAuthController = authViewController;
 			let dismiss: ((_ onComplete: @escaping () -> Void) -> Void) = { (onComplete) in
-				if let authController = weakAuthController, let presentingVC = authController.presentingViewController {
-					presentingVC.dismiss(animated:true) {
+				if let authController = weakAuthController {
+					authController.hide() {
 						onComplete();
 					};
 				} else {
@@ -82,6 +97,22 @@ public class Librespot: NSObject {
 				}
 			}
 			
+			#if os(iOS)
+			authViewController.onCancel = {
+				if !done {
+					done = true;
+					dismiss {
+						continuation.resume(returning: nil);
+					}
+				}
+			};
+			#endif
+			authViewController.onDismissed = {
+				if !done {
+					done = true;
+					continuation.resume(returning: nil);
+				}
+			};
 			authViewController.onAuthenticated = { (session) in
 				if !done {
 					done = true;
@@ -98,14 +129,6 @@ public class Librespot: NSObject {
 					}
 				}
 			};
-			authViewController.onCancel = {
-				if !done {
-					done = true;
-					dismiss {
-						continuation.resume(returning: nil)
-					}
-				}
-			};
 			authViewController.onDenied = {
 				if !done {
 					done = true;
@@ -114,21 +137,13 @@ public class Librespot: NSObject {
 					}
 				}
 			};
-			authViewController.onDismissed = {
-				if !done {
-					done = true;
-					continuation.resume(returning: nil)
-				}
-			};
 			
-			guard let topController = LibrespotIOSAuthViewController.findTopViewController() else {
-				continuation.resume(throwing: LibrespotError(kind:"UIError", message: "No top controller to display login view"))
+			guard authViewController.show() else {
+				continuation.resume(throwing: LibrespotError(kind:"UIError", message: "Can't display login screen"))
 				return;
 			}
-			topController.present(authViewController, animated: true, completion: nil);
 		}
 		#else
-		// TODO implement macOS flow
 		throw LibrespotError(kind: "NotImplemented", message: "Sorry");
 		#endif
 	}
@@ -155,14 +170,14 @@ public class Librespot: NSObject {
 	}
 	
 	@objc
-	public func logout() {
+	public func logout() async {
 		self.auth.clearSession();
-		core.logout();
+		await core.logout();
 	}
 	
-	@objc(initPlayer:)
-	public func initPlayer(_ listener: LibrespotPlayerEventListener) {
-		let initted = core.player_init();
+	@objc(initPlayer:completionHandler:)
+	public func initPlayer(_ listener: LibrespotPlayerEventListener) async {
+		let initted = await core.player_init();
 		if(!initted) {
 			return;
 		}
@@ -174,10 +189,10 @@ public class Librespot: NSObject {
 	}
 	
 	@objc
-	public func deinitPlayer() {
+	public func deinitPlayer() async {
 		self.eventReceiver?.dispose();
 		self.eventReceiver = nil;
-		core.player_deinit();
+		await core.player_deinit();
 	}
 	
 	@objc(loadTrackURI:startPlaying:position:)

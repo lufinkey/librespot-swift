@@ -9,14 +9,25 @@
 import UIKit
 import WebKit
 
-public class LibrespotIOSAuthViewController: UINavigationController, WKNavigationDelegate, UIAdaptivePresentationControllerDelegate {
+class LibrespotAuthViewControllerBase: UINavigationController, WKNavigationDelegate, UIAdaptivePresentationControllerDelegate {}
+#elseif os(macOS)
+import Cocoa
+import WebKit
+
+class LibrespotAuthViewControllerBase: NSViewController, WKNavigationDelegate, NSWindowDelegate {}
+#endif
+
+#if os(iOS) || os(macOS)
+class LibrespotAuthViewController: LibrespotAuthViewControllerBase {
 	private let loginOptions: LibrespotAuthOptions
-	private let progressView: LibrespotIOSProgressView = LibrespotIOSProgressView()
-	private let webViewController = LibrespotIOSWebViewController()
+	private let progressView: LibrespotProgressView = LibrespotProgressView()
+	private let webViewController = LibrespotWebViewController()
 	private let xssState: String = LibrespotUtils.randomURLSafe(length: 128)
 	private let codeVerifier: String = LibrespotUtils.randomURLSafe(length: 128)
 	
+	#if os(iOS)
 	public var onCancel: (() -> Void)? = nil;
+	#endif
 	public var onDismissed: (() -> Void)? = nil;
 	public var onDenied: (() -> Void)? = nil;
 	public var onError: ((_ error: Error) -> Void)? = nil;
@@ -24,13 +35,18 @@ public class LibrespotIOSAuthViewController: UINavigationController, WKNavigatio
 	
 	init(_ options: LibrespotAuthOptions) {
 		self.loginOptions = options;
+		#if os(iOS)
 		super.init(rootViewController: webViewController);
+		#elseif os(macOS)
+		super.init(nibName: nil, bundle: nil);
+		#endif
 	}
 	
 	required init?(coder: NSCoder) {
 		fatalError("init(coder:) has not been implemented")
 	}
 	
+	#if os(iOS)
 	override public func viewDidLoad() {
 		super.viewDidLoad();
 		
@@ -62,16 +78,51 @@ public class LibrespotIOSAuthViewController: UINavigationController, WKNavigatio
 			print("Failed to create auth url")
 		}
 	}
-	
-	override public var preferredStatusBarStyle: UIStatusBarStyle { .lightContent };
-	
-	@objc func didSelectCancelButton(_ sender: Any) {
-		self.onCancel?();
+	#elseif os(macOS)
+	override public func viewDidLoad() {
+		super.viewDidLoad()
+		
+		self.addChild(webViewController)
+		self.view.addSubview(webViewController.view)
+		webViewController.view.frame = self.view.bounds
+		webViewController.view.autoresizingMask = [.width, .height]
+		
+		self.webViewController.webView.navigationDelegate = self
+		
+		if let loginUserAgent = self.loginOptions.loginUserAgent {
+			self.webViewController.webView.customUserAgent = loginUserAgent
+		}
+		
+		if let url = self.loginOptions.spotifyWebAuthenticationURL(
+			responseType: self.loginOptions.tokenSwapURL != nil ? .Code : .Token,
+			state: self.xssState,
+			codeChallengeMethod: .S256,
+			codeChallenge: LibrespotUtils.makeCodeChallenge(codeVerifier: self.codeVerifier)) {
+			self.webViewController.webView.load(URLRequest(url: url))
+		} else {
+			print("Failed to create auth url")
+		}
 	}
+	#endif
+	
+	#if os(iOS)
+	override public var preferredStatusBarStyle: UIStatusBarStyle { .lightContent };
 	
 	public func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
 		self.onDismissed?();
 	}
+	#elseif os(macOS)
+	func windowShouldClose(_ sender: NSWindow) -> Bool {
+		self.onDismissed?();
+		return true;
+	}
+	#endif
+	
+	#if os(iOS)
+	@objc func didSelectCancelButton(_ sender: Any) {
+		self.onCancel?();
+	}
+	#endif
 	
 	
 	
@@ -189,7 +240,8 @@ public class LibrespotIOSAuthViewController: UINavigationController, WKNavigatio
 		}
 	}
 	
-	public static func findTopViewController() -> UIViewController? {
+	#if os(iOS)
+	private static func findTopViewController() -> UIViewController? {
 		guard var topController = UIApplication
 			.shared
 			.connectedScenes
@@ -203,9 +255,41 @@ public class LibrespotIOSAuthViewController: UINavigationController, WKNavigatio
 		return topController;
 	}
 	
+	public func show() -> Bool {
+		guard let topController = LibrespotIOSAuthViewController.findTopViewController() else {
+			return false;
+		}
+		topController.present(authViewController, animated: true, completion: nil);
+		return true;
+	}
+	
+	public func hide(completion: (() -> Void)? = nil) {
+		if let presentingVC = self.presentingViewController {
+			presentingVC.dismiss(animated:true) {
+				completion?();
+			};
+		} else {
+			completion?()
+		}
+	}
+	#elseif os(macOS)
+	public func show() -> Bool {
+		let window = NSWindow(contentViewController: self);
+		window.title = "Login to Spotify";
+		window.makeKeyAndOrderFront(nil);
+		window.delegate = self;
+		return true;
+	}
+	
+	public func hide(completion: (() -> Void)? = nil) {
+		self.view.window?.close();
+		completion?();
+	}
+	#endif
 	
 	
 	public func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction) async -> WKNavigationActionPolicy {
+		print("decidePolicyFor \(navigationAction.request.url)");
 		if let url = navigationAction.request.url, self.canHandleRedirectURL(url) {
 			progressView.show(in: self.view, animated: true)
 			Task {
