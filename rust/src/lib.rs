@@ -27,6 +27,12 @@ mod ffi {
 		message: String,
 	}
 
+	#[swift_bridge(swift_repr = "struct")]
+	pub struct LibrespotRedirectRules {
+		redirect_uri: String,
+		hook_uri: String,
+	}
+
 	// This is basically a redefinition of librespot's PlayerEvent beacuse of ✨ bridge reasons ✨
 	enum LibrespotPlayerEvent {
 		// Fired when the player is stopped (e.g. by issuing a "stop" command to the player).
@@ -141,6 +147,7 @@ mod ffi {
 		type LibrespotCore;
 
 		pub fn librespot_default_client_id() -> String;
+		pub fn librespot_default_redirect_rules() -> LibrespotRedirectRules;
 
 		#[swift_bridge(init)]
 		fn new(
@@ -189,6 +196,23 @@ fn create_session(options: &LibrespotOptions) -> Session {
 
 pub fn librespot_default_client_id() -> String {
 	return SessionConfig::default().client_id;
+}
+
+pub fn librespot_default_redirect_rules() -> ffi::LibrespotRedirectRules {
+	return match std::env::consts::OS {
+		"android" => ffi::LibrespotRedirectRules {
+			redirect_uri: "https://auth-callback.spotify.com/r/android/music/login".to_string(),
+			hook_uri: "spotify-auth-music://callback/r/android/music/login".to_string()
+		},
+		"ios" => ffi::LibrespotRedirectRules {
+			redirect_uri: "https://auth-callback.spotify.com/r/ios/music/login".to_string(),
+			hook_uri: "spotify-auth-music://callback/r/ios/music/login".to_string()
+		},
+		_ => ffi::LibrespotRedirectRules{
+			redirect_uri: "http://127.0.0.1:5165/login".to_string(),
+			hook_uri: "http://127.0.0.1:5165/login".to_string(),
+		}
+	}
 }
 
 pub struct LibrespotCore {

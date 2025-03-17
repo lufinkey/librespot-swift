@@ -22,6 +22,7 @@ public class Librespot: NSObject {
 		clientID: String?,
 		scopes: [String]?,
 		redirectURL: URL?,
+		redirectHookURL: URL? = nil,
 		tokenSwapURL: URL? = nil,
 		tokenRefreshURL: URL? = nil,
 		tokenRefreshEarliness: Double = LibrespotAuth.defaultTokenRefreshEarliness,
@@ -34,6 +35,7 @@ public class Librespot: NSObject {
 			authOptions: LibrespotAuthOptions(
 				clientID: clientID ?? defaultAuthOptions.clientID,
 				redirectURL: redirectURL ?? defaultAuthOptions.redirectURL,
+				redirectHookURL: redirectHookURL ?? defaultAuthOptions.redirectHookURL,
 				scopes: scopes ?? defaultAuthOptions.scopes,
 				tokenSwapURL: tokenSwapURL ?? defaultAuthOptions.tokenSwapURL,
 				tokenRefreshURL: tokenRefreshURL ?? defaultAuthOptions.tokenRefreshURL,
@@ -62,17 +64,19 @@ public class Librespot: NSObject {
 		}
 	}
 	
-	@objc(authenticateWithClientId:scopes:redirectURL:tokenSwapURL:loginUserAgent:params:completionHandler:)
+	@objc(authenticateWithClientId:scopes:redirectURL:followRedirect:tokenSwapURL:loginUserAgent:params:completionHandler:)
 	public static func authenticate(
 		clientID: String,
 		scopes: [String],
 		redirectURL: URL,
+		redirectHookURL: URL,
 		tokenSwapURL: URL? = nil,
 		loginUserAgent: String? = nil,
 		params: [String:String]? = nil) async throws -> LibrespotSession? {
 		return try await Self.authenticate(LibrespotAuthOptions(
 			clientID: clientID,
 			redirectURL: redirectURL,
+			redirectHookURL: redirectHookURL,
 			scopes: scopes,
 			tokenSwapURL: tokenSwapURL,
 			loginUserAgent: loginUserAgent,

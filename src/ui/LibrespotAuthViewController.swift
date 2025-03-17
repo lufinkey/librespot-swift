@@ -33,6 +33,8 @@ class LibrespotAuthViewController: LibrespotAuthViewControllerBase {
 	public var onError: ((_ error: Error) -> Void)? = nil;
 	public var onAuthenticated: ((_ session: LibrespotSession) -> Void)? = nil
 	
+	private var redirectedURL: URL? = nil;
+	
 	init(_ options: LibrespotAuthOptions) {
 		self.loginOptions = options;
 		#if os(iOS)
@@ -49,6 +51,8 @@ class LibrespotAuthViewController: LibrespotAuthViewControllerBase {
 	#if os(iOS)
 	override public func viewDidLoad() {
 		super.viewDidLoad();
+		
+		print("redirectHookURL = \(self.loginOptions.redirectHookURL)");
 		
 		self.navigationBar.barTintColor = .black;
 		self.navigationBar.tintColor = .white;
@@ -165,13 +169,10 @@ class LibrespotAuthViewController: LibrespotAuthViewControllerBase {
 		return [:]
 	}
 
-	func canHandleRedirectURL(_ url: URL) -> Bool {
-		let redirectURL = self.loginOptions.redirectURL;
-		
+	func canHandleRedirectURL(_ url: URL, redirectURL: URL) -> Bool {
 		if !url.absoluteString.hasPrefix(redirectURL.absoluteString) {
 			return false
 		}
-		
 		return redirectURL.path == url.path
 	}
 
@@ -289,12 +290,31 @@ class LibrespotAuthViewController: LibrespotAuthViewControllerBase {
 	
 	
 	public func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction) async -> WKNavigationActionPolicy {
-		if let url = navigationAction.request.url, self.canHandleRedirectURL(url) {
-			progressView.show(in: self.view, animated: true)
-			Task {
-				await self.handleRedirectURL(url)
+		if let url = navigationAction.request.url {
+			if self.redirectedURL == nil && self.canHandleRedirectURL(url, redirectURL: self.loginOptions.redirectURL) {
+				// initial redirect was hit, so start loading
+				self.progressView.show(in: self.view, animated: true)
+				if self.loginOptions.redirectHookURL != nil && self.loginOptions.redirectHookURL != self.loginOptions.redirectURL {
+					// save redirect URL
+					self.redirectedURL = url;
+					return .allow;
+				} else {
+					// handle redirect
+					Task {
+						await self.handleRedirectURL(url)
+					}
+					return .cancel;
+				}
 			}
-			return .cancel;
+			else if let redirectHookURL = self.loginOptions.redirectHookURL, self.canHandleRedirectURL(url, redirectURL: redirectHookURL) {
+				// handle redirect
+				let redirectedURL = self.redirectedURL;
+				self.redirectedURL = nil;
+				Task {
+					await self.handleRedirectURL(redirectedURL ?? url)
+				}
+				return .cancel;
+			}
 		}
 		return .allow;
 	}

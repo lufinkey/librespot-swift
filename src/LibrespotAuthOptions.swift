@@ -21,6 +21,7 @@ public struct LibrespotAuthOptions {
 	
 	public var clientID: String
 	public var redirectURL: URL
+	public var redirectHookURL: URL?
 	public var scopes: [String]
 	public var tokenSwapURL: URL?
 	public var tokenRefreshURL: URL?
@@ -49,9 +50,11 @@ public struct LibrespotAuthOptions {
 	}
 	
 	public static var `default`: LibrespotAuthOptions {
+		let redirect_rules = librespot_default_redirect_rules();
 		return LibrespotAuthOptions(
-			clientID: "65b708073fc0480ea92a077233ca87bd",// librespot_default_client_id().toString(),
-			redirectURL: URL(string:"http://127.0.0.1:5165/login")!,
+			clientID: librespot_default_client_id().toString(), // "65b708073fc0480ea92a077233ca87bd"
+			redirectURL: URL(string: redirect_rules.redirect_uri.toString())!,
+			redirectHookURL: URL(string: redirect_rules.hook_uri.toString())!,
 			scopes: ["streaming"],
 			tokenSwapURL: URL(string: "https://accounts.spotify.com/api/token")!,
 			tokenRefreshURL: URL(string: "https://accounts.spotify.com/api/token")!,
@@ -102,6 +105,7 @@ public struct LibrespotAuthOptions {
 		// Extract values from dict or fallbackDict
 		let clientID = dict["clientID"] as? String ?? fallbackDict["clientID"] as? String
 		let redirectURLString = dict["redirectURL"] as? String ?? fallbackDict["redirectURL"] as? String
+		let redirectHookURLString = dict["redirectHookURL"] as? String ?? fallbackDict["redirectHookURL"] as? String
 		let scopes = dict["scopes"] as? [String] ?? fallbackDict["scopes"] as? [String]
 		let tokenSwapURLString = dict["tokenSwapURL"] as? String ?? fallbackDict["tokenSwapURL"] as? String
 		let tokenRefreshURLString = dict["tokenRefreshURL"] as? String ?? fallbackDict["tokenRefreshURL"] as? String
@@ -113,9 +117,10 @@ public struct LibrespotAuthOptions {
 			throw LibrespotError.missingOption("clientID")
 		}
 		
-		guard let redirectURLString = redirectURLString, let validRedirectURL = URL(string: redirectURLString) else {
+		guard let redirectURLString = redirectURLString, let redirectURL = URL(string: redirectURLString) else {
 			throw LibrespotError.missingOption("redirectURL")
 		}
+		let redirectHookURL = redirectHookURLString.flatMap { URL(string: $0) }
 		
 		guard let validScopes = scopes else {
 			throw LibrespotError.missingOption("scopes")
@@ -129,7 +134,8 @@ public struct LibrespotAuthOptions {
 		// Create options object at the end
 		return LibrespotAuthOptions(
 			clientID: validClientID,
-			redirectURL: validRedirectURL,
+			redirectURL: redirectURL,
+			redirectHookURL: redirectHookURL,
 			scopes: validScopes,
 			tokenSwapURL: tokenSwapURLString.flatMap { URL(string: $0) },
 			tokenRefreshURL: tokenRefreshURLString.flatMap { URL(string: $0) },
