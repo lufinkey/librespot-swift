@@ -7,8 +7,8 @@
 
 public struct LibrespotAuthOptions {
 	public enum AuthResponseType: String {
-		case Code = "code"
-		case Token = "token"
+		case code = "code"
+		case token = "token"
 	}
 	
 	public enum CodeChallengeMethod: String {
@@ -16,7 +16,7 @@ public struct LibrespotAuthOptions {
 	}
 	
 	public enum ParamKey: String {
-		case ShowDialog = "show_dialog"
+		case showDialog = "show_dialog"
 	}
 	
 	public var clientID: String
@@ -30,7 +30,7 @@ public struct LibrespotAuthOptions {
 	
 	public var showDialog: Bool? {
 		get {
-			if let valueStr = self.params?[ParamKey.ShowDialog.rawValue] as? String {
+			if let valueStr = self.params?[ParamKey.showDialog.rawValue] as? String {
 				return valueStr == "true";
 			}
 			return nil;
@@ -39,12 +39,12 @@ public struct LibrespotAuthOptions {
 			if let newValue = newValue {
 				let newValueStr = newValue ? "true" : "false"
 				if self.params == nil {
-					self.params = [ParamKey.ShowDialog.rawValue: newValueStr];
+					self.params = [ParamKey.showDialog.rawValue: newValueStr];
 				} else {
-					self.params![ParamKey.ShowDialog.rawValue] = newValueStr
+					self.params![ParamKey.showDialog.rawValue] = newValueStr
 				}
 			} else {
-				self.params?.removeValue(forKey: ParamKey.ShowDialog.rawValue)
+				self.params?.removeValue(forKey: ParamKey.showDialog.rawValue)
 			}
 		}
 	}
@@ -59,7 +59,7 @@ public struct LibrespotAuthOptions {
 			tokenSwapURL: URL(string: "https://accounts.spotify.com/api/token")!,
 			tokenRefreshURL: URL(string: "https://accounts.spotify.com/api/token")!,
 			//loginUserAgent: "Mozilla/5.0",
-			params: [ParamKey.ShowDialog.rawValue:"true"])
+			params: [ParamKey.showDialog.rawValue:"true"])
 	}
 	
 	public func spotifyWebAuthenticationURL(
@@ -128,7 +128,7 @@ public struct LibrespotAuthOptions {
 		
 		var params: [String: String] = [:]
 		if let showDialog = showDialog {
-			params["show_dialog"] = showDialog ? "true" : "false"
+			params[ParamKey.showDialog.rawValue] = showDialog ? "true" : "false"
 		}
 		
 		// Create options object at the end

@@ -48,10 +48,10 @@ class LibrespotAuthViewController: LibrespotAuthViewControllerBase {
 		fatalError("init(coder:) has not been implemented")
 	}
 	
-	#if os(iOS)
 	override public func viewDidLoad() {
 		super.viewDidLoad();
 		
+		#if os(iOS)
 		self.navigationBar.barTintColor = .black;
 		self.navigationBar.tintColor = .white;
 		self.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white];
@@ -59,19 +59,26 @@ class LibrespotAuthViewController: LibrespotAuthViewControllerBase {
 		self.modalPresentationStyle = .formSheet;
 		self.presentationController?.delegate = self;
 		
-		self.webViewController.webView.navigationDelegate = self;
 		//self.webController.title = @"Log into Spotify";
 		self.webViewController.navigationItem.leftBarButtonItem = UIBarButtonItem(
 			barButtonSystemItem: .cancel,
 			target: self,
 			action:#selector(didSelectCancelButton));
+		#elseif os(macOS)
+		self.addChild(webViewController)
+		self.view.addSubview(webViewController.view)
+		webViewController.view.frame = self.view.bounds
+		webViewController.view.autoresizingMask = [.width, .height]
+		#endif
+		
+		self.webViewController.webView.navigationDelegate = self
 		
 		if let loginUserAgent = self.loginOptions.loginUserAgent {
 			self.webViewController.webView.customUserAgent = loginUserAgent;
 		}
 		
 		if let url = self.loginOptions.spotifyWebAuthenticationURL(
-			responseType: self.loginOptions.tokenSwapURL != nil ? .Code : .Token,
+			responseType: self.loginOptions.tokenSwapURL != nil ? .code : .token,
 			state: self.xssState,
 			codeChallengeMethod: .S256,
 			codeChallenge: LibrespotUtils.makeCodeChallenge(codeVerifier: self.codeVerifier)) {
@@ -80,32 +87,6 @@ class LibrespotAuthViewController: LibrespotAuthViewControllerBase {
 			print("Failed to create auth url")
 		}
 	}
-	#elseif os(macOS)
-	override public func viewDidLoad() {
-		super.viewDidLoad()
-		
-		self.addChild(webViewController)
-		self.view.addSubview(webViewController.view)
-		webViewController.view.frame = self.view.bounds
-		webViewController.view.autoresizingMask = [.width, .height]
-		
-		self.webViewController.webView.navigationDelegate = self
-		
-		if let loginUserAgent = self.loginOptions.loginUserAgent {
-			self.webViewController.webView.customUserAgent = loginUserAgent
-		}
-		
-		if let url = self.loginOptions.spotifyWebAuthenticationURL(
-			responseType: self.loginOptions.tokenSwapURL != nil ? .Code : .Token,
-			state: self.xssState,
-			codeChallengeMethod: .S256,
-			codeChallenge: LibrespotUtils.makeCodeChallenge(codeVerifier: self.codeVerifier)) {
-			self.webViewController.webView.load(URLRequest(url: url))
-		} else {
-			print("Failed to create auth url")
-		}
-	}
-	#endif
 	
 	#if os(iOS)
 	override public var preferredStatusBarStyle: UIStatusBarStyle { .lightContent };
