@@ -163,6 +163,7 @@ mod ffi {
 		fn new(
 			client_id: String,
 			audio_cache_path: Option<String>,
+			audio_cache_size_limit: Option<u64>,
 		) -> LibrespotCore;
 
 		async fn login_with_accesstoken(&mut self, access_token: String) -> Result<(),LibrespotError>;
@@ -186,6 +187,7 @@ mod ffi {
 struct LibrespotOptions {
 	client_id: String,
 	audio_cache_path: Option<String>,
+	audio_cache_size_limit: Option<u64>,
 }
 
 fn create_session(options: &LibrespotOptions) -> Session {
@@ -196,7 +198,7 @@ fn create_session(options: &LibrespotOptions) -> Session {
 			None,
 			None,
 			Some(Path::new(options.audio_cache_path.as_ref().unwrap().as_str())),
-			None)
+			options.audio_cache_size_limit)
 			.map_err(|e| dbg!(e))
 			.ok()
 	} else { None };
@@ -261,6 +263,7 @@ impl LibrespotCore {
 	fn new(
 		client_id: String,
 		audio_cache_path: Option<String>,
+		audio_cache_size_limit: Option<u64>,
 	) -> Self {
 		env_logger::Builder::from_env(
 			Env::default().default_filter_or("libreact_native_librespot=debug,librespot=debug"),
@@ -270,6 +273,7 @@ impl LibrespotCore {
 		let options = LibrespotOptions {
 			client_id: client_id,
 			audio_cache_path: audio_cache_path,
+			audio_cache_size_limit: audio_cache_size_limit,
 		};
 
 		LibrespotCore {

@@ -7,6 +7,9 @@ public class Librespot: NSObject {
 		.urls(for: .cachesDirectory, in: .userDomainMask)
 		.first?.appendingPathComponent("librespot_audio_cache").absoluteString;
 	
+	@objc
+	public static let defaultAudioCacheSize: UInt64 = 1024 * 1024 * 100; // 100mb
+	
 	private let core: LibrespotCore;
 	private let auth: LibrespotAuth;
 	private var eventReceiver: LibrespotPlayerEventReceiver? = nil;
@@ -29,7 +32,9 @@ public class Librespot: NSObject {
 		loginUserAgent: String? = nil,
 		params: [String:String]? = nil,
 		sessionUserDefaultsKey: String? = nil,
-		audioCachePath: String? = nil) {
+		audioCachePath: String? = nil,
+		limitAudioCacheSize: Bool = false,
+		audioCacheSize: UInt64 = defaultAudioCacheSize) {
 		let defaultAuthOptions = LibrespotAuthOptions.default;
 		self.init(
 			authOptions: LibrespotAuthOptions(
@@ -49,8 +54,9 @@ public class Librespot: NSObject {
 	public init(authOptions: LibrespotAuthOptions,
 		tokenRefreshEarliness: Double = LibrespotAuth.defaultTokenRefreshEarliness,
 		sessionUserDefaultsKey: String? = nil,
-		audioCachePath: String? = nil) {
-		self.core = LibrespotCore(authOptions.clientID, audioCachePath);
+		audioCachePath: String? = nil,
+		audioCacheSizeLimit: UInt64? = nil) {
+		self.core = LibrespotCore(authOptions.clientID, audioCachePath, audioCacheSizeLimit);
 		self.auth = LibrespotAuth(
 			options: authOptions,
 			tokenRefreshEarliness: tokenRefreshEarliness,
