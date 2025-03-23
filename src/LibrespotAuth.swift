@@ -294,5 +294,87 @@ public class LibrespotAuth: NSObject {
 		
 		return session
 	}
+	
+	
+	
+	@MainActor
+	public static func authenticate(_ options: LibrespotAuthOptions) async throws -> LibrespotSession? {
+		#if os(iOS) || os(macOS)
+		var done = false;
+		return try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<LibrespotSession?,Error>) in
+			let authViewController = LibrespotAuthViewController(options);
+			
+			weak var weakAuthController = authViewController;
+			let dismiss: ((_ onComplete: @escaping () -> Void) -> Void) = { (onComplete) in
+				if let authController = weakAuthController {
+					authController.hide() {
+						onComplete();
+					};
+				} else {
+					onComplete()
+				}
+			}
+			
+			#if os(iOS)
+			authViewController.onCancel = {
+				if !done {
+					done = true;
+					dismiss {
+						continuation.resume(returning: nil);
+					}
+				}
+			};
+			#endif
+			authViewController.onDismissed = {
+				if !done {
+					done = true;
+					continuation.resume(returning: nil);
+				}
+			};
+			authViewController.onAuthenticated = { (session) in
+				if !done {
+					done = true;
+					dismiss {
+						continuation.resume(returning: session);
+					}
+				}
+			};
+			authViewController.onError = { (error) in
+				if !done {
+					done = true;
+					dismiss {
+						continuation.resume(throwing: error);
+					}
+				}
+			};
+			authViewController.onDenied = {
+				if !done {
+					done = true;
+					dismiss {
+						continuation.resume(returning: nil)
+					}
+				}
+			};
+			
+			guard authViewController.show() else {
+				continuation.resume(throwing: LibrespotError(kind:"UIError", message: "Can't display login screen"))
+				return;
+			}
+		}
+		#else
+		let scopesVec = RustVec<RustString>();
+		for scope in options.scopes {
+			scopesVec.push(value: RustString(scope));
+		}
+		// TODO show a cancel popup?
+		let sessionData = try await librespot_authenticate(RustString(options.clientID), RustString(options.redirectURL.absoluteString), scopesVec);
+		return LibrespotSession(
+			clientID: options.clientID,
+			accessToken: sessionData.access_token.toString(),
+			expireDate: Date(timeIntervalSince1970: sessionData.expires_in),
+			refreshToken: sessionData.refresh_token.toString(),
+			scopes: sessionData.scopes.map({ $0.as_str().toString() }));
+		#endif
+	}
 }
 
