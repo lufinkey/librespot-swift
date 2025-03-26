@@ -62,16 +62,21 @@ public class Librespot: NSObject {
 			tokenRefreshEarliness: tokenRefreshEarliness,
 			sessionUserDefaultsKey: sessionUserDefaultsKey);
 		super.init()
+		self.auth.onSessionRenewed = { [weak self] (auth, session) in
+			guard let self else { return }
+			try await self.loginPlayer(session: session)
+		};
 	}
 	
+	@objc
 	public func loadStoredSession() async throws {
 		if let session = self.auth.load() {
 			try await self.core.login_with_accesstoken(session.accessToken);
 		}
 	}
 	
-	@objc(authenticateWithClientId:scopes:redirectURL:followRedirect:tokenSwapURL:loginUserAgent:params:completionHandler:)
-	public static func authenticate(
+	@objc(authenticateViaOAuthWithClientID:scopes:redirectURL:followRedirect:tokenSwapURL:loginUserAgent:params:completionHandler:)
+	public static func authenticateViaOAuth(
 		clientID: String,
 		scopes: [String],
 		redirectURL: URL,
@@ -79,7 +84,7 @@ public class Librespot: NSObject {
 		tokenSwapURL: URL? = nil,
 		loginUserAgent: String? = nil,
 		params: [String:String]? = nil) async throws -> LibrespotSession? {
-		return try await Self.authenticate(LibrespotAuthOptions(
+		return try await Self.authenticateViaOAuth(LibrespotAuthOptions(
 			clientID: clientID,
 			redirectURL: redirectURL,
 			redirectHookURL: redirectHookURL,
@@ -90,18 +95,18 @@ public class Librespot: NSObject {
 	}
 	
 	@MainActor
-	public static func authenticate(_ options: LibrespotAuthOptions) async throws -> LibrespotSession? {
-		return try await LibrespotAuth.authenticate(options);
+	public static func authenticateViaOAuth(_ options: LibrespotAuthOptions) async throws -> LibrespotSession? {
+		return try await LibrespotAuth.authenticateViaOAuth(options);
 	}
 	
 	@objc
-	public static func authenticate() async throws -> LibrespotSession? {
-		return try await Self.authenticate(.default);
+	public static func authenticateViaOAuth() async throws -> LibrespotSession? {
+		return try await Self.authenticateViaOAuth(.default);
 	}
 	
 	@objc
-	public func login() async throws -> LibrespotSession? {
-		let session = try await Self.authenticate(self.auth.options)
+	public func loginViaOAuth() async throws -> LibrespotSession? {
+		let session = try await Self.authenticateViaOAuth(self.auth.options)
 		if let session = session {
 			try await core.login_with_accesstoken(session.accessToken);
 			self.auth.startSession(session);
@@ -111,8 +116,12 @@ public class Librespot: NSObject {
 	
 	@objc(loginWithSession:completionHandler:)
 	public func login(session: LibrespotSession) async throws {
-		try await core.login_with_accesstoken(session.accessToken);
+		try await self.loginPlayer(session: session)
 		self.auth.startSession(session);
+	}
+	
+	private func loginPlayer(session: LibrespotSession) async throws {
+		try await core.login_with_accesstoken(session.accessToken);
 	}
 	
 	@objc
@@ -169,5 +178,9 @@ public class Librespot: NSObject {
 	@objc(seekTo:)
 	public func seekTo(_ position_ms: UInt32) {
 		core.player_seek(position_ms);
+	}
+	
+	func onAuthSessionRenewed(auth: LibrespotAuth, session: LibrespotSession) async throws {
+		try await self.loginPlayer(session: session)
 	}
 }

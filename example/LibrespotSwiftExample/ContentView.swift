@@ -18,7 +18,7 @@ struct ContentView: View {
 			Button("Login") {
 				Task {
 					do {
-						let session = try await LibrespotShared.shared.login()
+						let session = try await LibrespotShared.shared.loginViaOAuth()
 						NSLog("Session \(session)");
 					} catch let error {
 						NSLog("Failed to login: \(error.localizedDescription)")

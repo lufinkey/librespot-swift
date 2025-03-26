@@ -35,6 +35,8 @@ public class LibrespotAuth: NSObject {
 		return session?.refreshToken != nil && self.options.tokenRefreshURL != nil;
 	}
 	
+	var onSessionRenewed: ((LibrespotAuth, LibrespotSession) async throws -> Void)? = nil
+	
 	private var sessionRenewalTask: Task<Bool,Error>? = nil;
 	private var sessionRenewalUntilCompleteTask: Task<Bool,Error>? = nil;
 	private var lastSessionRenewalTime: DispatchTime? = nil
@@ -166,10 +168,10 @@ public class LibrespotAuth: NSObject {
 			return false;
 		}
 		if waitForDefinitiveResponse {
-			if let renewSessionUntilCompleteTask = self.sessionRenewalUntilCompleteTask {
-				return try await renewSessionUntilCompleteTask.value;
+			if let renewalTask = self.sessionRenewalUntilCompleteTask {
+				return try await renewalTask.value;
 			}
-			self.sessionRenewalUntilCompleteTask = Task {
+			let renewalTask = Task {
 				while true {
 					do {
 						return try await self.renewSession(waitForDefinitiveResponse: false);
@@ -182,6 +184,11 @@ public class LibrespotAuth: NSObject {
 					try await Task.sleep(nanoseconds: 10 * 1_000_000_000)
 				}
 			}
+			self.sessionRenewalUntilCompleteTask = renewalTask;
+			defer {
+				self.sessionRenewalUntilCompleteTask = nil;
+			}
+			return try await renewalTask.value
 		} else {
 			if let currentRefreshTask = self.sessionRenewalTask {
 				return try await currentRefreshTask.value;
@@ -194,6 +201,7 @@ public class LibrespotAuth: NSObject {
 				clientID: session.clientID,
 				scopes: session.scopes,
 				url: tokenRefreshURL);
+			try await self.onSessionRenewed?(self, newSession)
 			self.startSession(newSession)
 			return true
 		}
@@ -298,7 +306,7 @@ public class LibrespotAuth: NSObject {
 	
 	
 	@MainActor
-	public static func authenticate(_ options: LibrespotAuthOptions) async throws -> LibrespotSession? {
+	public static func authenticateViaOAuth(_ options: LibrespotAuthOptions) async throws -> LibrespotSession? {
 		#if os(iOS) || os(macOS)
 		var done = false;
 		return try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<LibrespotSession?,Error>) in

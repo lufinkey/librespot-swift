@@ -77,7 +77,7 @@ public class LibrespotUtils: NSObject {
 	}
 	
 	@objc(kindOfError:)
-	public static func kindOf(error: NSError) -> String {
+	public class func kindOf(error: NSError) -> String {
 		if let lrsError = error as? LibrespotError {
 			let kind = lrsError.kind.toString();
 			if kind.starts(with: "HTTP") {
