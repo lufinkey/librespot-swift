@@ -135,9 +135,9 @@ public class LibrespotAuth: NSObject {
 
 	@objc
 	private func authRenewalTimerDidFire() {
-		Task {
+		Task { [weak self] in
 			do {
-				let _ = try await self.renewSession(waitForDefinitiveResponse: true);
+				let _ = try await self?.renewSession(waitForDefinitiveResponse: true);
 			} catch let error {
 				NSLog("Librespot session refresh failed: \(error.localizedDescription)")
 			}
@@ -171,19 +171,23 @@ public class LibrespotAuth: NSObject {
 			if let renewalTask = self.sessionRenewalUntilCompleteTask {
 				return try await renewalTask.value;
 			}
-			let renewalTask = Task {
+			let renewalTask = Task { [weak self] in
 				while true {
 					do {
-						return try await self.renewSession(waitForDefinitiveResponse: false);
+						return try await self?.renewSession(waitForDefinitiveResponse: false) ?? false;
 					} catch let error {
 						if Self.isErrorDefinitive(error) {
-							throw error
+							throw error;
 						}
+					}
+					if self == nil {
+						break;
 					}
 					// retry session renewal in 10s
 					try await Task.sleep(nanoseconds: 10 * 1_000_000_000)
 				}
-			}
+				return false;
+			};
 			self.sessionRenewalUntilCompleteTask = renewalTask;
 			defer {
 				self.sessionRenewalUntilCompleteTask = nil;
@@ -195,14 +199,16 @@ public class LibrespotAuth: NSObject {
 			}
 		}
 		
-		let refreshTask = Task<Bool,Error> {
+		let refreshTask = Task<Bool,Error> { [weak self] in
 			let newSession = try await Self.refreshSession(
 				withToken: refreshToken,
 				clientID: session.clientID,
 				scopes: session.scopes,
 				url: tokenRefreshURL);
-			try await self.onSessionRenewed?(self, newSession)
-			self.startSession(newSession)
+			if let self = self {
+				try await self.onSessionRenewed?(self, newSession)
+				self.startSession(newSession)
+			}
 			return true
 		}
 		self.sessionRenewalTask = refreshTask;
