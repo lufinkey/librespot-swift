@@ -64,8 +64,8 @@ import Foundation
 
 class LibrespotPlayerEventReceiver {
 	private var disposed: Bool = false;
-	private var core: LibrespotCore;
-	private var listener: LibrespotPlayerEventListener;
+	private weak var core: LibrespotCore?;
+	private weak var listener: LibrespotPlayerEventListener?;
 
   init(_ core: LibrespotCore, _ listener: LibrespotPlayerEventListener) {
 		self.core = core;
@@ -78,89 +78,89 @@ class LibrespotPlayerEventReceiver {
 	
 	func pollEvents() async {
 		while (!self.disposed) {
-			guard let evt = await self.core.player_get_event().event else {
+			guard let evt = await self.core?.player_get_event().event else {
 				continue;
 			}
 			switch evt {
 			case .Playing(let playRequestId, let trackURI, let position):
-				self.listener.onEventPlaying(
+				self.listener?.onEventPlaying(
 					playRequestId: playRequestId,
 					trackURI: trackURI.toString(),
 					position: position);
 			case .Paused(let playRequestId, let trackURI, let position):
-				self.listener.onEventPaused(
+				self.listener?.onEventPaused(
 					playRequestId: playRequestId,
 					trackURI: trackURI.toString(),
 					position: position);
 			case .Stopped(let playRequestId, let trackURI):
-				self.listener.onEventStopped(
+				self.listener?.onEventStopped(
 					playRequestId: playRequestId,
 					trackURI: trackURI.toString());
 			case .Seeked(let playRequestId, let trackURI, let positionMs):
-				self.listener.onEventSeeked(
+				self.listener?.onEventSeeked(
 					playRequestId: playRequestId,
 					trackURI: trackURI.toString(),
 					position: positionMs);
 			case .Loading(let playRequestId, let trackURI, let positionMs):
-				self.listener.onEventLoading(
+				self.listener?.onEventLoading(
 					playRequestId: playRequestId,
 					trackURI: trackURI.toString(),
 					position: positionMs);
 			case .Preloading(let trackURI):
-				self.listener.onEventPreloading(
+				self.listener?.onEventPreloading(
 					trackURI: trackURI.toString());
 			case .TimeToPreloadNextTrack(let playRequestId, let trackURI):
-				self.listener.onEventTimeToPreloadNextTrack(
+				self.listener?.onEventTimeToPreloadNextTrack(
 					playRequestId: playRequestId,
 					trackURI: trackURI.toString());
 			case .EndOfTrack(let playRequestId, let trackURI):
-				self.listener.onEventEndOfTrack(
+				self.listener?.onEventEndOfTrack(
 					playRequestId: playRequestId,
 					trackURI: trackURI.toString());
 			case .VolumeChanged(let volume):
-				self.listener.onEventVolumeChanged(
+				self.listener?.onEventVolumeChanged(
 					volume: volume);
 			case .PositionCorrection(let playRequestId, let trackURI, let position):
-				self.listener.onEventPositionCorrection(
+				self.listener?.onEventPositionCorrection(
 					playRequestId: playRequestId,
 					trackURI: trackURI.toString(),
 					position: position);
 			case .TrackChanged(let trackURI, let duration):
-				self.listener.onEventTrackChanged(
+				self.listener?.onEventTrackChanged(
 					trackURI: trackURI.toString(),
 					duration: duration);
 			case .ShuffleChanged(let shuffle):
-				self.listener.onEventShuffleChanged(
+				self.listener?.onEventShuffleChanged(
 					shuffle: shuffle);
 			case .RepeatChanged(let context, let track):
-				self.listener.onEventRepeatChanged(
+				self.listener?.onEventRepeatChanged(
 					context: context,
 					track: track);
 			case .AutoPlayChanged(let autoPlay):
-				self.listener.onEventAutoPlayChanged(
+				self.listener?.onEventAutoPlayChanged(
 					autoPlay: autoPlay);
 			case .FilterExplicitContentChanged(let filter):
-				self.listener.onEventFilterExplicitContentChanged(
+				self.listener?.onEventFilterExplicitContentChanged(
 					filter: filter);
 			case .PlayRequestIdChanged(let playRequestId):
-				self.listener.onEventPlayRequestIdChanged(
+				self.listener?.onEventPlayRequestIdChanged(
 					playRequestId: playRequestId);
 			case .SessionConnected(let connectionId, let userName):
-				self.listener.onEventSessionConnected(
+				self.listener?.onEventSessionConnected(
 					connectionId: connectionId.toString(),
 					username: userName.toString());
 			case .SessionDisconnected(let connectionId, let userName):
-				self.listener.onEventSessionDisconnected(
+				self.listener?.onEventSessionDisconnected(
 					connectionId: connectionId.toString(),
 					username: userName.toString());
 			case .SessionClientChanged(let clientId, let clientName, let clientBrandName, let clientModelName):
-				self.listener.onEventSessionClientChanged(
+				self.listener?.onEventSessionClientChanged(
 					clientId: clientId.toString(),
 					clientName: clientName.toString(),
 					clientBrandName: clientBrandName.toString(),
 					clientModelName: clientModelName.toString());
 			case .Unavailable(let playRequestId, let trackURI):
-				self.listener.onEventUnavailable(
+				self.listener?.onEventUnavailable(
 					playRequestId: playRequestId,
 					trackURI: trackURI.toString());
 			}
