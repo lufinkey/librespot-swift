@@ -56,7 +56,12 @@ public class Librespot: NSObject {
 		sessionUserDefaultsKey: String? = nil,
 		audioCachePath: String? = nil,
 		audioCacheSizeLimit: UInt64? = nil) {
-		self.core = LibrespotCore(authOptions.clientID, audioCachePath, audioCacheSizeLimit);
+		self.core = LibrespotCore(LibrespotCoreOptions(
+			client_id: RustString(authOptions.clientID),
+			cache_audio: audioCachePath != nil,
+			audio_cache_path: RustString(audioCachePath ?? ""),
+			limit_audio_cache_size: audioCacheSizeLimit != nil,
+			audio_cache_size_limit: audioCacheSizeLimit ?? .zero));
 		self.auth = LibrespotAuth(
 			options: authOptions,
 			tokenRefreshEarliness: tokenRefreshEarliness,

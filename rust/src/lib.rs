@@ -1,7 +1,7 @@
 // code adapted from https://github.com/jariz/Speck/blob/master/src/lib.rs
 
 use env_logger::Env;
-use ffi::LibrespotError;
+use ffi::{LibrespotCoreOptions, LibrespotError};
 use std::path::Path;
 use librespot::core::spotify_id::{SpotifyId, SpotifyItemType};
 use librespot::core::cache::Cache;
@@ -41,6 +41,15 @@ mod ffi {
 		pub expires_in: f64,
 		pub token_type: String,
 		pub scopes: Vec<String>,
+	}
+
+	#[swift_bridge(swift_repr = "struct")]
+	struct LibrespotCoreOptions {
+		pub client_id: String,
+		pub cache_audio: bool,
+		pub audio_cache_path: String,
+		pub limit_audio_cache_size: bool,
+		pub audio_cache_size_limit: u64,
 	}
 
 	// This is basically a redefinition of librespot's PlayerEvent beacuse of ✨ bridge reasons ✨
@@ -161,9 +170,7 @@ mod ffi {
 
 		#[swift_bridge(init)]
 		fn new(
-			client_id: String,
-			audio_cache_path: Option<String>,
-			audio_cache_size_limit: Option<u64>,
+			options: LibrespotCoreOptions,
 		) -> LibrespotCore;
 
 		async fn login_with_accesstoken(&mut self, access_token: String) -> Result<(),LibrespotError>;
@@ -181,13 +188,6 @@ mod ffi {
 		fn player_stop(&self);
 		fn player_seek(&self, position_ms: u32);
 	}
-}
-
-#[derive(Debug, Clone, Default)]
-struct LibrespotOptions {
-	client_id: String,
-	audio_cache_path: Option<String>,
-	audio_cache_size_limit: Option<u64>,
 }
 
 fn create_session(options: &LibrespotOptions) -> Session {
@@ -251,6 +251,13 @@ pub async fn librespot_authenticate(client_id: String, redirect_uri: String, sco
 	})
 }
 
+#[derive(Debug, Clone, Default)]
+struct LibrespotOptions {
+	client_id: String,
+	audio_cache_path: Option<String>,
+	audio_cache_size_limit: Option<u64>,
+}
+
 pub struct LibrespotCore {
 	options: LibrespotOptions,
 	session: Option<Session>,
@@ -259,25 +266,20 @@ pub struct LibrespotCore {
 }
 
 impl LibrespotCore {
-
 	fn new(
-		client_id: String,
-		audio_cache_path: Option<String>,
-		audio_cache_size_limit: Option<u64>,
+		options: ffi::LibrespotCoreOptions
 	) -> Self {
 		env_logger::Builder::from_env(
 			Env::default().default_filter_or("libreact_native_librespot=debug,librespot=debug"),
 		)
 		.init();
 
-		let options = LibrespotOptions {
-			client_id: client_id,
-			audio_cache_path: audio_cache_path,
-			audio_cache_size_limit: audio_cache_size_limit,
-		};
-
 		LibrespotCore {
-			options: options,
+			options: LibrespotOptions {
+				client_id: options.client_id,
+				audio_cache_path: if options.cache_audio { Some(options.audio_cache_path) } else { None },
+				audio_cache_size_limit: if options.limit_audio_cache_size { Some(options.audio_cache_size_limit) } else { None },
+			},
 			session: None,
 			player: None,
 			channel: None,
