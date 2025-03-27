@@ -1,7 +1,6 @@
 // code adapted from https://github.com/jariz/Speck/blob/master/src/lib.rs
 
 use env_logger::Env;
-use ffi::{LibrespotCoreOptions, LibrespotError};
 use std::path::Path;
 use librespot::core::spotify_id::{SpotifyId, SpotifyItemType};
 use librespot::core::cache::Cache;
@@ -227,7 +226,7 @@ pub fn librespot_default_redirect_rules() -> ffi::LibrespotRedirectRules {
 	}
 }
 
-pub async fn librespot_authenticate(client_id: String, redirect_uri: String, scopes: Vec<String>) -> Result<ffi::LibrespotSessionData, LibrespotError> {
+pub async fn librespot_authenticate(client_id: String, redirect_uri: String, scopes: Vec<String>) -> Result<ffi::LibrespotSessionData, ffi::LibrespotError> {
 	let client = librespot::oauth::OAuthClientBuilder::new(client_id.as_str(), redirect_uri.as_str(), scopes.iter().map(|s| s.as_str()).collect())
 		.open_in_browser()
 		.with_custom_message("")
