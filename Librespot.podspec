@@ -18,7 +18,7 @@ Pod::Spec.new do |s|
 	s.pod_target_xcconfig = { "DEFINES_MODULE" => "YES" }
 
 	s.prepare_command = <<-CMD
-		cd rust
-		make
+		cd rust || exit $?
+		make || exit $?
 	CMD
 end
